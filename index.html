@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Studio | بناء البرومبت الاحترافي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-input: #1a1a28;
+  --bg-hover: #22223a;
+  --accent: #c9a84c;
+  --accent-glow: #c9a84c40;
+  --accent-dim: #8a7033;
+  --text: #e8e4dc;
+  --text-dim: #8a8694;
+  --text-muted: #5a5668;
+  --border: #2a2a3e;
+  --border-active: #c9a84c55;
+  --danger: #e04848;
+  --success: #48c78e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --glass: rgba(18,18,26,0.85);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background effects */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, #c9a84c08 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, #1a1a4008 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, #c9a84c03 0%, transparent 70%);
+  animation: bgShift 20s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes bgShift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, -1%); }
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 20px 30px;
+  position: relative;
+}
+
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--bg-deep);
+  padding: 6px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), #e8d5a0, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: var(--text-dim);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* Main layout */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .main-grid { grid-template-columns: 1fr; }
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.card:hover { border-color: var(--border-active); }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.card-title .icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+}
+
+/* Form elements */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 14px;
+  padding: 12px 14px;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.field select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8694' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 14px center;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Tags / Chips */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: var(--accent-dim);
+  color: var(--text);
+}
+
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-deep);
+  font-weight: 600;
+}
+
+/* Row layout */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #d4b65e);
+  color: var(--bg-deep);
+  width: 100%;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 18px;
+  font-size: 13px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
+}
+
+.btn-icon {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+}
+
+.btn-icon:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+
+/* Output area */
+.output-section {
+  grid-column: 1 / -1;
+}
+
+.output-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  overflow-x: auto;
+}
+
+.output-tab {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.output-tab:hover { color: var(--text); }
+
+.output-tab.active {
+  background: var(--accent);
+  color: var(--bg-deep);
+  font-weight: 700;
+}
+
+.output-box {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text);
+  min-height: 200px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  direction: ltr;
+  text-align: left;
+  position: relative;
+}
+
+.output-box .placeholder {
+  color: var(--text-muted);
+  font-family: 'Tajawal', sans-serif;
+  text-align: center;
+  direction: rtl;
+  padding: 60px 20px;
+  font-size: 15px;
+}
+
+.output-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.copy-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--accent);
+  color: var(--bg-deep);
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.copy-toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Saved prompts */
+.saved-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.saved-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.saved-item:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
+}
+
+.saved-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.saved-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.saved-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Footer watermark */
+.watermark {
+  text-align: center;
+  padding: 40px 20px 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.watermark span {
+  color: var(--accent-dim);
+  font-weight: 600;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* Counter badge */
+.counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  margin-right: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Header -->
+  <div class="header animate-in">
+    <div class="header-badge">✦ PROMPT STUDIO</div>
+    <h1>بناء البرومبت الاحترافي</h1>
+    <p>صمم برومبتات تصوير احترافية لجميع منصات الذكاء الاصطناعي</p>
+  </div>
+
+  <div class="main-grid">
+    <!-- Left: Builder -->
+    <div class="card animate-in delay-1">
+      <div class="card-title">
+        <div class="icon">📸</div>
+        الموضوع الرئيسي
+      </div>
+
+      <div class="field">
+        <label>وصف الموضوع</label>
+        <textarea id="subject" placeholder="مثال: رجل سعودي يرتدي ثوب أبيض يقف أمام برج المملكة عند غروب الشمس..."></textarea>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>نوع التصوير</label>
+          <select id="photoType">
+            <option value="portrait">بورتريه - Portrait</option>
+            <option value="landscape">مناظر طبيعية - Landscape</option>
+            <option value="street">تصوير شوارع - Street</option>
+            <option value="product">تصوير منتجات - Product</option>
+            <option value="food">تصوير طعام - Food</option>
+            <option value="architecture">تصوير معماري - Architecture</option>
+            <option value="macro">ماكرو - Macro</option>
+            <option value="fashion">تصوير أزياء - Fashion</option>
+            <option value="cinematic">سينمائي - Cinematic</option>
+            <option value="aerial">تصوير جوي - Aerial/Drone</option>
+            <option value="conceptual">مفاهيمي - Conceptual Art</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>زاوية الكاميرا</label>
+          <select id="angle">
+            <option value="eye level">مستوى العين - Eye Level</option>
+            <option value="low angle">زاوية منخفضة - Low Angle</option>
+            <option value="high angle">زاوية عالية - High Angle</option>
+            <option value="bird's eye view">من الأعلى - Bird's Eye</option>
+            <option value="dutch angle">زاوية مائلة - Dutch Angle</option>
+            <option value="close-up">كلوز أب - Close-up</option>
+            <option value="extreme close-up">كلوز أب شديد - Extreme Close-up</option>
+            <option value="wide shot">لقطة واسعة - Wide Shot</option>
+            <option value="over the shoulder">من فوق الكتف - Over Shoulder</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>الإضاءة</label>
+          <select id="lighting">
+            <option value="golden hour">الساعة الذهبية - Golden Hour</option>
+            <option value="blue hour">الساعة الزرقاء - Blue Hour</option>
+            <option value="natural daylight">ضوء طبيعي - Natural Light</option>
+            <option value="studio lighting">إضاءة استوديو - Studio</option>
+            <option value="dramatic side lighting">إضاءة جانبية درامية - Side Light</option>
+            <option value="backlit / rim lighting">إضاءة خلفية - Backlit</option>
+            <option value="neon lighting">إضاءة نيون - Neon</option>
+            <option value="moody low-key">إضاءة خافتة - Low Key</option>
+            <option value="high-key bright">إضاءة ساطعة - High Key</option>
+            <option value="volumetric fog lighting">إضاءة ضبابية - Volumetric</option>
+            <option value="candlelight">ضوء شموع - Candlelight</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>العدسة</label>
+          <select id="lens">
+            <option value="85mm f/1.4">85mm f/1.4 - بورتريه</option>
+            <option value="50mm f/1.8">50mm f/1.8 - قياسي</option>
+            <option value="35mm f/1.4">35mm f/1.4 - واسعة</option>
+            <option value="24mm f/2.8">24mm f/2.8 - واسعة جداً</option>
+            <option value="100mm macro">100mm Macro - ماكرو</option>
+            <option value="70-200mm f/2.8">70-200mm f/2.8 - تيلي</option>
+            <option value="16mm fisheye">16mm Fisheye - عين السمكة</option>
+            <option value="135mm f/2">135mm f/2 - بوكيه</option>
+            <option value="14mm ultra-wide">14mm Ultra-wide</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Style & Details -->
+    <div class="card animate-in delay-2">
+      <div class="card-title">
+        <div class="icon">🎨</div>
+        الأسلوب والتفاصيل
+      </div>
+
+      <div class="field">
+        <label>النمط البصري</label>
+        <div class="chips-container" id="styleChips">
+          <div class="chip active" data-value="cinematic">سينمائي</div>
+          <div class="chip" data-value="hyper-realistic">واقعي فائق</div>
+          <div class="chip" data-value="editorial">إديتوريال</div>
+          <div class="chip" data-value="vintage film">فيلم كلاسيكي</div>
+          <div class="chip" data-value="dark moody">داكن درامي</div>
+          <div class="chip" data-value="soft dreamy">ناعم حالم</div>
+          <div class="chip" data-value="HDR vivid">HDR حي</div>
+          <div class="chip" data-value="minimalist">بسيط</div>
+          <div class="chip" data-value="luxury premium">فاخر</div>
+          <div class="chip" data-value="surreal">سريالي</div>
+          <div class="chip" data-value="noir">نوار</div>
+          <div class="chip" data-value="cyberpunk">سايبربنك</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>لوحة الألوان</label>
+        <div class="chips-container" id="colorChips">
+          <div class="chip active" data-value="warm tones">ألوان دافئة</div>
+          <div class="chip" data-value="cool tones">ألوان باردة</div>
+          <div class="chip" data-value="monochrome">أحادي اللون</div>
+          <div class="chip" data-value="muted earth tones">ترابي</div>
+          <div class="chip" data-value="vibrant saturated">حيوي مشبع</div>
+          <div class="chip" data-value="desaturated pastel">باستيل</div>
+          <div class="chip" data-value="black and gold">أسود وذهبي</div>
+          <div class="chip" data-value="teal and orange">تيل وبرتقالي</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>الدقة / النسبة</label>
+          <select id="ratio">
+            <option value="16:9">16:9 سينمائي</option>
+            <option value="4:3">4:3 كلاسيكي</option>
+            <option value="1:1">1:1 مربع</option>
+            <option value="9:16">9:16 ستوري</option>
+            <option value="3:2">3:2 تصوير</option>
+            <option value="21:9">21:9 ألترا وايد</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الجودة</label>
+          <select id="quality">
+            <option value="8K ultra-detailed">8K فائق التفاصيل</option>
+            <option value="4K high quality">4K عالي الجودة</option>
+            <option value="high resolution detailed">دقة عالية مفصل</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>تفاصيل إضافية (اختياري)</label>
+        <input type="text" id="extras" placeholder="مثال: خلفية ضبابية، انعكاسات، ظلال ناعمة، تأثير بوكيه...">
+      </div>
+
+      <div class="field">
+        <label>Negative Prompt (ما لا تريده)</label>
+        <input type="text" id="negative" placeholder="مثال: blurry, low quality, watermark, text, deformed...">
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button class="btn btn-primary" onclick="generatePrompt()">
+          ✦ توليد البرومبت
+        </button>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div class="card output-section animate-in delay-3">
+      <div class="card-title">
+        <div class="icon">⚡</div>
+        البرومبت الجاهز
+      </div>
+
+      <div class="output-tabs" id="outputTabs">
+        <button class="output-tab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney</button>
+        <button class="output-tab" data-platform="dalle" onclick="switchTab(this)">DALL·E</button>
+        <button class="output-tab" data-platform="leonardo" onclick="switchTab(this)">Leonardo AI</button>
+        <button class="output-tab" data-platform="ideogram" onclick="switchTab(this)">Ideogram</button>
+        <button class="output-tab" data-platform="grok" onclick="switchTab(this)">Grok</button>
+        <button class="output-tab" data-platform="flux" onclick="switchTab(this)">Flux</button>
+      </div>
+
+      <div class="output-box" id="outputBox">
+        <div class="placeholder">
+          ✦ قم بتعبئة الحقول ثم اضغط "توليد البرومبت" للحصول على برومبت احترافي
+        </div>
+      </div>
+
+      <div class="output-actions" id="outputActions" style="display:none;">
+        <button class="btn btn-secondary" onclick="copyPrompt()">📋 نسخ</button>
+        <button class="btn btn-secondary" onclick="savePrompt()">💾 حفظ</button>
+        <button class="btn btn-secondary" onclick="resetForm()">🔄 جديد</button>
+      </div>
+    </div>
+
+    <!-- Saved Prompts -->
+    <div class="card animate-in delay-4" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <div class="icon">📁</div>
+        البرومبتات المحفوظة
+        <span class="counter" id="savedCount">0</span>
+      </div>
+      <div class="saved-list" id="savedList">
+        <div style="text-align:center; color:var(--text-muted); padding:30px; font-size:14px;">
+          لا توجد برومبتات محفوظة بعد
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="watermark">
+    صُمم بواسطة <span>Turki AlSultan</span> | Ksa8Turky | tech_live0
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="copy-toast" id="toast">✓ تم النسخ بنجاح</div>
+
+<script>
+// State
+let currentPrompts = {};
+let currentPlatform = 'midjourney';
+let savedPrompts = [];
+
+// Chip selection
+document.querySelectorAll('.chips-container').forEach(container => {
+  container.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      // Allow multiple selections
+      chip.classList.toggle('active');
+    });
+  });
+});
+
+function getSelectedChips(containerId) {
+  const chips = document.querySelectorAll(`#${containerId} .chip.active`);
+  return Array.from(chips).map(c => c.dataset.value);
+}
+
+function val(id) {
+  return document.getElementById(id).value.trim();
+}
+
+function generatePrompt() {
+  const subject = val('subject');
+  if (!subject) {
+    document.getElementById('subject').focus();
+    document.getElementById('subject').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('subject').style.borderColor = '', 2000);
+    return;
+  }
+
+  const photoType = val('photoType');
+  const angle = val('angle');
+  const lighting = val('lighting');
+  const lens = val('lens');
+  const styles = getSelectedChips('styleChips');
+  const colors = getSelectedChips('colorChips');
+  const ratio = val('ratio');
+  const quality = val('quality');
+  const extras = val('extras');
+  const negative = val('negative') || 'blurry, low quality, watermark, text, deformed, ugly, disfigured';
+
+  const styleStr = styles.join(', ');
+  const colorStr = colors.join(', ');
+
+  // Base description
+  const baseDesc = `${subject}, ${photoType} photography, shot from ${angle}, ${lighting}, shot on ${lens}`;
+  const styleSection = styleStr ? `, ${styleStr} style` : '';
+  const colorSection = colorStr ? `, ${colorStr} color palette` : '';
+  const qualitySection = `, ${quality}`;
+  const extrasSection = extras ? `, ${extras}` : '';
+
+  // Midjourney
+  currentPrompts.midjourney = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection} --ar ${ratio} --v 6.1 --style raw --q 2
+
+${negative ? `--no ${negative}` : ''}`.trim();
+
+  // DALL·E
+  currentPrompts.dalle = `Create a ${quality} ${photoType} photograph: ${subject}. The scene is captured from a ${angle} perspective with ${lighting}. Shot using a ${lens} lens. The visual style is ${styleStr || 'cinematic'} with a ${colorStr || 'natural'} color palette. Aspect ratio: ${ratio}.${extras ? ' Additional details: ' + extras : ''}`;
+
+  // Leonardo AI
+  currentPrompts.leonardo = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
+
+Negative prompt: ${negative}
+Aspect Ratio: ${ratio}
+Guidance Scale: 7
+Steps: 30`.trim();
+
+  // Ideogram
+  currentPrompts.ideogram = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
+
+Aspect Ratio: ${ratio}
+Style: Photo
+Negative: ${negative}`.trim();
+
+  // Grok
+  currentPrompts.grok = `Generate a ${quality} ${photoType} photo: ${subject}. Camera angle: ${angle}. Lighting: ${lighting}. Lens: ${lens}. Style: ${styleStr || 'cinematic'}. Colors: ${colorStr || 'natural'}. Ratio: ${ratio}.${extras ? ' Extra: ' + extras : ''} Avoid: ${negative}`;
+
+  // Flux
+  currentPrompts.flux = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
+
+[Parameters]
+aspect_ratio: ${ratio}
+guidance: 3.5
+steps: 28
+negative_prompt: ${negative}`.trim();
+
+  // Display
+  displayPrompt(currentPlatform);
+  document.getElementById('outputActions').style.display = 'flex';
+}
+
+function displayPrompt(platform) {
+  const box = document.getElementById('outputBox');
+  if (currentPrompts[platform]) {
+    box.innerHTML = '';
+    box.textContent = currentPrompts[platform];
+  }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  currentPlatform = tab.dataset.platform;
+  if (currentPrompts[currentPlatform]) {
+    displayPrompt(currentPlatform);
+  }
+}
+
+function copyPrompt() {
+  const text = currentPrompts[currentPlatform];
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✓ تم النسخ بنجاح');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ تم النسخ بنجاح');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function savePrompt() {
+  const subject = val('subject');
+  if (!subject || !currentPrompts.midjourney) return;
+
+  const item = {
+    id: Date.now(),
+    title: subject.substring(0, 60),
+    platform: currentPlatform,
+    prompts: { ...currentPrompts },
+    date: new Date().toLocaleDateString('ar-SA')
+  };
+
+  savedPrompts.unshift(item);
+  renderSaved();
+  showToast('💾 تم الحفظ');
+}
+
+function loadSaved(id) {
+  const item = savedPrompts.find(s => s.id === id);
+  if (!item) return;
+  currentPrompts = { ...item.prompts };
+  currentPlatform = item.platform;
+
+  // Switch tab
+  document.querySelectorAll('.output-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.platform === currentPlatform);
+  });
+
+  displayPrompt(currentPlatform);
+  document.getElementById('outputActions').style.display = 'flex';
+  showToast('✓ تم التحميل');
+}
+
+function deleteSaved(id) {
+  savedPrompts = savedPrompts.filter(s => s.id !== id);
+  renderSaved();
+}
+
+function renderSaved() {
+  const list = document.getElementById('savedList');
+  const count = document.getElementById('savedCount');
+  count.textContent = savedPrompts.length;
+
+  if (savedPrompts.length === 0) {
+    list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:14px;">لا توجد برومبتات محفوظة بعد</div>';
+    return;
+  }
+
+  list.innerHTML = savedPrompts.map(item => `
+    <div class="saved-item">
+      <div class="saved-item-info" onclick="loadSaved(${item.id})">
+        <div class="saved-item-title">${item.title}</div>
+        <div class="saved-item-meta">${item.date} · ${item.platform}</div>
+      </div>
+      <div class="saved-item-actions">
+        <button class="btn-icon" onclick="loadSaved(${item.id})" title="تحميل">📂</button>
+        <button class="btn-icon" onclick="deleteSaved(${item.id})" title="حذف">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function resetForm() {
+  document.getElementById('subject').value = '';
+  document.getElementById('extras').value = '';
+  document.getElementById('negative').value = '';
+  document.getElementById('outputBox').innerHTML = '<div class="placeholder">✦ قم بتعبئة الحقول ثم اضغط "توليد البرومبت" للحصول على برومبت احترافي</div>';
+  document.getElementById('outputActions').style.display = 'none';
+  currentPrompts = {};
+}
+</script>
+
+</body>
+</html>
