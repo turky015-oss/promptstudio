@@ -810,8 +810,9 @@ body::after {
       </div>
 
       <div class="output-tabs" id="outputTabs">
-        <button class="output-tab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney</button>
-        <button class="output-tab" data-platform="dalle" onclick="switchTab(this)">DALL·E</button>
+        <button class="output-tab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney V7</button>
+        <button class="output-tab" data-platform="gptimage" onclick="switchTab(this)">GPT Image</button>
+        <button class="output-tab" data-platform="nanobanana" onclick="switchTab(this)">Nano Banana Pro</button>
         <button class="output-tab" data-platform="leonardo" onclick="switchTab(this)">Leonardo AI</button>
         <button class="output-tab" data-platform="ideogram" onclick="switchTab(this)">Ideogram</button>
         <button class="output-tab" data-platform="grok" onclick="switchTab(this)">Grok</button>
@@ -915,13 +916,27 @@ function generatePrompt() {
   const qualitySection = `, ${quality}`;
   const extrasSection = extras ? `, ${extras}` : '';
 
-  // Midjourney
-  currentPrompts.midjourney = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection} --ar ${ratio} --v 6.1 --style raw --q 2
+  // Midjourney V7
+  currentPrompts.midjourney = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection} --ar ${ratio} --v 7 --s 200 --q 2
 
 ${negative ? `--no ${negative}` : ''}`.trim();
 
-  // DALL·E
-  currentPrompts.dalle = `Create a ${quality} ${photoType} photograph: ${subject}. The scene is captured from a ${angle} perspective with ${lighting}. Shot using a ${lens} lens. The visual style is ${styleStr || 'cinematic'} with a ${colorStr || 'natural'} color palette. Aspect ratio: ${ratio}.${extras ? ' Additional details: ' + extras : ''}`;
+  // GPT Image (gpt-image-1.5)
+  currentPrompts.gptimage = `Create a ${quality} ${photoType} photograph: ${subject}. The scene is captured from a ${angle} perspective with ${lighting}. Shot using a ${lens} lens. The visual style is ${styleStr || 'cinematic'} with a ${colorStr || 'natural'} color palette. Aspect ratio: ${ratio}.${extras ? ' Additional details: ' + extras : ''}${negative ? ' Avoid: ' + negative : ''}
+
+[Model: gpt-image-1.5]
+[Quality: high]
+[Size: 1024x1024]`;
+
+  // Nano Banana Pro Studio
+  currentPrompts.nanobanana = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
+
+[Nano Banana Pro Settings]
+Style: Photography
+Aspect Ratio: ${ratio}
+Quality: Ultra
+Enhancement: Pro
+Negative: ${negative}`.trim();
 
   // Leonardo AI
   currentPrompts.leonardo = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
