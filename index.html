@@ -1251,8 +1251,10 @@ body {
 
       <div class="platform-tabs" id="outputTabs">
         <button class="ptab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney V8.1</button>
-        <button class="ptab" data-platform="gptimage" onclick="switchTab(this)">GPT Image 1.5</button>
+        <button class="ptab" data-platform="gptimage" onclick="switchTab(this)">GPT Image 2</button>
         <button class="ptab" data-platform="nanobanana" onclick="switchTab(this)">Imagen 4 Ultra</button>
+        <button class="ptab" data-platform="nbpro" onclick="switchTab(this)">Nano Banana Pro</button>
+        <button class="ptab" data-platform="nb2" onclick="switchTab(this)">Nano Banana 2</button>
         <button class="ptab" data-platform="flux" onclick="switchTab(this)">FLUX.2 Dev</button>
         <button class="ptab" data-platform="ideogram" onclick="switchTab(this)">Ideogram 3.0</button>
         <button class="ptab" data-platform="adobe" onclick="switchTab(this)">Firefly Image 3</button>
@@ -1351,8 +1353,8 @@ function generatePrompt() {
     // Midjourney V8.1 — released April 30 2026, fastest model, 2K HD, raw mode
     midjourney: `${base} --ar ${ratio} --v 8.1 --style raw --s 250 --q 2 --hd\n\n--no ${neg}`,
 
-    // GPT Image 1.5 — replaced DALL-E 3 (deprecated Nov 2025), natively in GPT-5.4, 2048×2048 max
-    gptimage: `A ${quality} ${photoType} photograph: ${subject}. Shot from ${angle}${camStr} using ${lens} lens. Lighting: ${lighting}. Style: ${styleStr}. Colors: ${colorStr}.${extStr}\n\nAvoid: ${neg}\n\n[Model: gpt-image-1.5]\n[Quality: high]\n[Size: 2048x2048]\n[Format: png]`,
+    // GPT Image 2 — OpenAI May 2026, replaces 1.5, native 4096×4096, faster, better instruction following
+    gptimage: `A ${quality} ${photoType} photograph: ${subject}. Shot from ${angle}${camStr} using ${lens} lens. Lighting: ${lighting}. Style: ${styleStr}. Colors: ${colorStr}.${extStr}\n\nAvoid: ${neg}\n\n[Model: gpt-image-2]\n[Quality: high]\n[Size: 4096x4096]\n[Format: png]\n[Platform: OpenAI API / ChatGPT Plus]`,
 
     // Imagen 4 Ultra — Google, best text rendering + photorealism, via Gemini API
     nanobanana: `${base}\n\n[Model: Imagen 4 Ultra]\n[Platform: Google AI Studio / Gemini API]\nAspect: ${ratio}\nQuality: Ultra\nOutput: PNG\nnegativePrompt: ${neg}`,
@@ -1373,7 +1375,13 @@ function generatePrompt() {
     grok: `Generate ${quality} ${photoType}: ${subject}. Angle: ${angle}${camStr}. Lens: ${lens}. Lighting: ${lighting}. Style: ${styleStr}. Colors: ${colorStr}. Ratio: ${ratio}.${extStr} Avoid: ${neg}\n\n[Model: Grok Aurora 2]\n[Platform: x.ai / Grok app]`,
 
     // Stable Diffusion 3.5 Large — open-source, local, maximum control
-    sd: `${base}\n\n[Model: Stable Diffusion 3.5 Large]\n[Platform: Local / Stability AI API]\nwidth: ${ratio === '16:9' ? 1344 : ratio === '9:16' ? 768 : 1024}\nheight: ${ratio === '16:9' ? 768 : ratio === '9:16' ? 1344 : 1024}\ncfg_scale: 7\nsteps: 40\nsampler: DPM++ 3M SDE\nnegative_prompt: ${neg}`
+    sd: `${base}\n\n[Model: Stable Diffusion 3.5 Large]\n[Platform: Local / Stability AI API]\nwidth: ${ratio === '16:9' ? 1344 : ratio === '9:16' ? 768 : 1024}\nheight: ${ratio === '16:9' ? 768 : ratio === '9:16' ? 1344 : 1024}\ncfg_scale: 7\nsteps: 40\nsampler: DPM++ 3M SDE\nnegative_prompt: ${neg}`,
+
+    // Nano Banana Pro — photorealism + character generation, reusable Soul Characters, commercial use
+    nbpro: `${base}\n\n[Model: Nano Banana Pro]\n[Platform: higgsfield.ai]\nAspect Ratio: ${ratio}\nQuality: Ultra\nStyle: Photography\nSoul Character: supported (reusable identity)\nCommercial: true\nNegative: ${neg}`,
+
+    // Nano Banana 2 — top quality 4K, text rendering, diagrams, cinematic detail
+    nb2: `${base}\n\n[Model: Nano Banana 2]\n[Platform: higgsfield.ai]\nAspect Ratio: ${ratio}\nQuality: 4K Ultra\nText rendering: best-in-class\nDiagrams: supported\nStyle: ${styleStr || 'cinematic'}\nNegative: ${neg}`
   };
 
   showOutput();
@@ -1418,12 +1426,19 @@ function generateVideoPrompt() {
     adobe: `${base}\n\n[Model: Wan 2.6 — Alibaba]\n[Platform: FAL.AI / self-host]\nResolution: 1080p\nDuration: ${duration}\nOpen source: true\nEcosystem: complete\nCommercial: yes (paid plans)\nSelf-host: supported`,
 
     // LTX-2 — open-source, licensed training data, 1080p-4K local, Jan 2026
-    sd: `${base}\n\n[Model: LTX-2]\n[Platform: local / Stability AI]\nResolution: 1080p to 4K\nDuration: ${duration}\nOpen source: true\nTraining data: licensed\nCommercial safe: true\nLocal deployment: supported`
+    sd: `${base}\n\n[Model: LTX-2]\n[Platform: local / Stability AI]\nResolution: 1080p to 4K\nDuration: ${duration}\nOpen source: true\nTraining data: licensed\nCommercial safe: true\nLocal deployment: supported`,
+
+    // Nano Banana Pro — video generation via higgsfield, Soul Characters, cinematic
+    nbpro: `${base}\n\n[Model: Nano Banana Pro — higgsfield.ai]\nDuration: ${duration}\nSoul Character: reusable identity\nCinematic: true\nMotion: ${motion}`,
+
+    // Nano Banana 2 — 4K ultra, precise motion, high detail
+    nb2: `${base}\n\n[Model: Nano Banana 2 — higgsfield.ai]\nDuration: ${duration}\nResolution: 4K Ultra\nMotion control: precise\nCamera: ${motion}\nStyle: ${style}`
   };
 
   // Update tab labels to video model names
   const labels = {
     midjourney: 'Veo 3.1 ★', gptimage: 'Kling 3.0', nanobanana: 'Runway Gen-4.5',
+    nbpro: 'NB Pro Video', nb2: 'NB2 Video',
     flux: 'Seedance 2.0', ideogram: 'Pika 2.5', leonardo: 'Luma Ray3',
     grok: 'Hailuo 2.3', adobe: 'Wan 2.6', sd: 'LTX-2'
   };
@@ -1449,7 +1464,8 @@ function generateCalliPrompt() {
 
   // Reset tab labels
   const photoLabels = {
-    midjourney:'Midjourney V8.1', gptimage:'GPT Image 1.5', nanobanana:'Imagen 4 Ultra',
+    midjourney:'Midjourney V8.1', gptimage:'GPT Image 2', nanobanana:'Imagen 4 Ultra',
+    nbpro:'Nano Banana Pro', nb2:'Nano Banana 2',
     flux:'FLUX.2 Dev', ideogram:'Ideogram 3.0', adobe:'Firefly Image 3',
     leonardo:'Leonardo Phoenix', grok:'Grok Aurora 2', sd:'SD 3.5 Large'
   };
@@ -1459,8 +1475,10 @@ function generateCalliPrompt() {
 
   currentPrompts = {
     midjourney: `${base} --ar 16:9 --v 8.1 --s 400 --q 2 --hd\n\n--no ${neg}`,
-    gptimage: `${base}\n\nAvoid: ${neg}\n\n[Model: gpt-image-1.5]\n[Quality: high]\n[Size: 2048x2048]`,
+    gptimage: `${base}\n\nAvoid: ${neg}\n\n[Model: gpt-image-2]\n[Quality: high]\n[Size: 4096x4096]\n[Platform: OpenAI API / ChatGPT Plus]`,
     nanobanana: `${base}\n\n[Model: Imagen 4 Ultra]\n[Platform: Google AI Studio]\nAspect: 16:9\nnegativePrompt: ${neg}`,
+    nbpro: `${base}\n\n[Model: Nano Banana Pro]\n[Platform: higgsfield.ai]\nAspect Ratio: 16:9\nQuality: Ultra\nSoul Character: supported\nCommercial: true\nNegative: ${neg}`,
+    nb2: `${base}\n\n[Model: Nano Banana 2]\n[Platform: higgsfield.ai]\nAspect Ratio: 16:9\nQuality: 4K Ultra\nText rendering: best-in-class\nNegative: ${neg}`,
     flux: `${base}\n\n[Model: FLUX.2 Dev]\naspect_ratio: 16:9\nguidance: 4.0\nsteps: 32\nnegative_prompt: ${neg}`,
     ideogram: `${base}, calligraphy art\n\n[Model: Ideogram 3.0]\nStyle: DESIGN\nAspect Ratio: 16_9\nMagic Prompt: ON\nNegative: ${neg}`,
     adobe: `${base}\n\n[Model: Adobe Firefly Image 3]\nContent type: Art\nAspect: 16:9\nStyle strength: 80\nCommercial safe: true`,
