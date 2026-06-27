@@ -3,1928 +3,2099 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt.in short</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Prompt Studio | بناء البرومبت الاحترافي</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07070d;
-  --bg-2: #0e0e1a;
-  --bg-3: #141424;
-  --bg-4: #1a1a2e;
-  --card: #0f0f1e;
-  --border: #ffffff0f;
-  --border-h: #ffffff1a;
-  --gold: #d4a843;
-  --gold-2: #f0c96e;
-  --gold-glow: #d4a84330;
-  --gold-dim: #8a6c22;
-  --text: #f0ece4;
-  --text-2: #9994aa;
-  --text-3: #5a5570;
-  --danger: #ff4757;
-  --success: #2ed573;
-  --purple: #6c5ce7;
-  --teal: #00d2d3;
-  --r: 16px;
-  --r-sm: 10px;
+  --bg-deep: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-input: #1a1a28;
+  --bg-hover: #22223a;
+  --accent: #c9a84c;
+  --accent-glow: #c9a84c40;
+  --accent-dim: #8a7033;
+  --text: #e8e4dc;
+  --text-dim: #8a8694;
+  --text-muted: #5a5668;
+  --border: #2a2a3e;
+  --border-active: #c9a84c55;
+  --danger: #e04848;
+  --success: #48c78e;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --glass: rgba(18,18,26,0.85);
 }
 
 [data-theme="light"] {
-  --bg: #f4f1ec;
-  --bg-2: #ede9e1;
-  --bg-3: #e5e0d5;
-  --bg-4: #ddd8cc;
-  --card: #faf8f4;
-  --border: #00000010;
-  --border-h: #00000020;
-  --gold: #8a6515;
-  --gold-2: #b38520;
-  --gold-glow: #d4a84325;
-  --gold-dim: #6a4d10;
-  --text: #1a1628;
-  --text-2: #4a4560;
-  --text-3: #8a8498;
-  --danger: #d63031;
-  --success: #00b894;
+  --bg-deep: #f5f3ee;
+  --bg-card: #ffffff;
+  --bg-input: #f0ede6;
+  --bg-hover: #e8e4dc;
+  --accent: #9a7b2e;
+  --accent-glow: #9a7b2e30;
+  --accent-dim: #7a6120;
+  --text: #1a1a28;
+  --text-dim: #5a5668;
+  --text-muted: #8a8694;
+  --border: #d8d4cc;
+  --border-active: #9a7b2e55;
+  --danger: #d43535;
+  --success: #2ea66d;
+  --shadow: 0 8px 32px rgba(0,0,0,0.08);
+  --glass: rgba(255,255,255,0.9);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+}
+.theme-toggle:hover { border-color: var(--accent); transform: scale(1.1); }
+
+/* Language Toggle */
+.lang-toggle {
+  position: fixed;
+  top: 20px;
+  left: 74px;
+  z-index: 100;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 22px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s;
+  box-shadow: var(--shadow);
+}
+.lang-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Char counter */
+.char-count { font-size: 11px; color: var(--text-muted); text-align: left; direction: ltr; margin-top: 6px; }
+
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
   font-family: 'Tajawal', sans-serif;
-  background: var(--bg);
+  background: var(--bg-deep);
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* Background mesh */
-.bg-mesh {
+/* Background effects */
+body::before {
+  content: '';
   position: fixed;
-  inset: 0;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, #c9a84c08 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, #1a1a4008 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, #c9a84c03 0%, transparent 70%);
+  animation: bgShift 20s ease-in-out infinite;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;
 }
-.bg-mesh::before {
-  content: '';
-  position: absolute;
-  width: 600px; height: 600px;
-  top: -200px; right: -200px;
-  background: radial-gradient(circle, #d4a84308 0%, transparent 70%);
-  animation: pulse 8s ease-in-out infinite;
-}
-.bg-mesh::after {
-  content: '';
-  position: absolute;
-  width: 500px; height: 500px;
-  bottom: -100px; left: -100px;
-  background: radial-gradient(circle, #6c5ce705 0%, transparent 70%);
-  animation: pulse 12s ease-in-out infinite reverse;
-}
-@keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
 
-.app {
+@keyframes bgShift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, -1%); }
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  z-index: 0;
+  pointer-events: none;
+}
+
+.app-container {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 clamp(16px, 3vw, 32px) 60px;
-}
-
-/* ===== HEADER ===== */
-.header {
-  padding: 40px 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.logo-icon {
-  width: 56px; height: 56px;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.logo-icon svg {
+  max-width: 100%;
   width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 14px #d4a84360) drop-shadow(0 4px 20px #d4a84330);
-  transition: filter 0.3s;
-}
-.logo-area:hover .logo-icon svg {
-  filter: drop-shadow(0 0 22px #d4a84390) drop-shadow(0 6px 28px #d4a84350);
+  margin: 0 auto;
+  padding: 20px clamp(12px, 3vw, 40px);
 }
 
-.logo-wordmark {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+@media (min-width: 1400px) {
+  .app-container { max-width: 1400px; }
+}
+@media (min-width: 900px) and (max-width: 1399px) {
+  .app-container { max-width: 96%; }
 }
 
-.logo-name {
-  display: flex;
-  align-items: baseline;
-  gap: 0;
-  line-height: 1;
-}
-
-.logo-prompt {
-  font-family: 'Syne', sans-serif;
-  font-size: 27px;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -1px;
-}
-
-.logo-dot-in {
-  font-family: 'Syne', sans-serif;
-  font-size: 27px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.logo-short {
-  font-family: 'Syne', sans-serif;
-  font-size: 27px;
-  font-weight: 300;
-  color: var(--text-2);
-  letter-spacing: -0.5px;
-}
-
-.logo-tagline {
-  font-size: 10px;
-  color: var(--text-3);
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.profile-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 30px;
-  padding: 6px 14px 6px 6px;
-  cursor: default;
-}
-
-.profile-pill img {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--gold);
-}
-
-.profile-pill-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-2);
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-.icon-btn {
-  width: 40px; height: 40px;
-  border-radius: 10px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text-2);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  transition: all 0.2s;
-}
-.icon-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-/* ===== MODE SWITCHER ===== */
-.mode-switcher {
-  display: flex;
-  gap: 4px;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 5px;
-  margin-bottom: 28px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.mode-switcher::-webkit-scrollbar { display: none; }
-
-.mode-btn {
-  flex: 1;
-  min-width: 100px;
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  color: var(--text-2);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.25s;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.mode-btn:hover { color: var(--text); background: var(--border); }
-.mode-btn.active {
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  color: #0a0a12;
-  font-weight: 700;
-  box-shadow: 0 2px 12px var(--gold-glow);
-}
-
-/* ===== GRID ===== */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media(max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
-
-/* ===== CARDS ===== */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: clamp(18px, 2.5vw, 26px);
-  transition: border-color 0.3s;
+/* Header */
+.header {
+  text-align: center;
+  padding: 40px 20px 30px;
   position: relative;
-  overflow: hidden;
 }
-.card:hover { border-color: var(--border-h); }
 
-.card-header {
-  display: flex;
+.header-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--bg-deep);
+  padding: 6px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   margin-bottom: 20px;
 }
 
-.card-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  border-radius: 9px;
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), #e8d5a0, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: var(--text-dim);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/* Main layout */
+.main-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.main-grid > .card,
+.main-grid > .output-section {
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2.5vw, 28px);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+  width: 100%;
+}
+
+.card:hover { border-color: var(--border-active); }
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.card-title .icon {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
-  flex-shrink: 0;
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
 }
 
-.card-title-text {
-  font-size: 15px;
-  font-weight: 700;
-  font-family: 'Space Grotesk', sans-serif;
+/* Form elements */
+.field {
+  margin-bottom: 16px;
 }
 
-/* ===== FIELDS ===== */
-.field { margin-bottom: 14px; }
-.field:last-child { margin-bottom: 0; }
-
-.label {
+.field label {
   display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-3);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
   margin-bottom: 6px;
-  letter-spacing: 0.3px;
 }
 
-.input, .select, .textarea {
+.field input,
+.field select,
+.field textarea {
   width: 100%;
-  background: var(--bg-3);
+  background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'Tajawal', sans-serif;
   font-size: 14px;
-  padding: 11px 13px;
+  padding: 12px 14px;
   transition: all 0.2s;
   outline: none;
 }
-.input:focus, .select:focus, .textarea:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px var(--gold-glow);
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
-.textarea { resize: vertical; min-height: 80px; }
-.select {
+
+.field select {
   appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%235a5570'%3E%3Cpath d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238a8694' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: 12px center;
+  background-position: 14px center;
 }
 
-.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-@media(max-width:500px) { .row-2,.row-3 { grid-template-columns: 1fr; } }
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
 
-/* ===== CHIPS ===== */
-.chips {
+/* Tags / Chips */
+.chips-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 8px;
   margin-top: 6px;
 }
 
 .chip {
-  padding: 6px 13px;
-  border-radius: 20px;
-  background: var(--bg-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-input);
   border: 1px solid var(--border);
-  color: var(--text-2);
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--text-dim);
   cursor: pointer;
   transition: all 0.2s;
   user-select: none;
 }
-.chip:hover { border-color: var(--gold-dim); color: var(--text); }
-.chip.active {
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  border-color: transparent;
-  color: #0a0a12;
+
+.chip:hover {
+  border-color: var(--accent-dim);
+  color: var(--text);
 }
 
-/* ===== BUTTONS ===== */
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  color: #07070d;
-  border: none;
-  border-radius: var(--r-sm);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.25s;
-  display: flex;
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg-deep);
+  font-weight: 600;
+}
+
+/* Row layout */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 500px) {
+  .row { grid-template-columns: 1fr; }
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 4px 20px var(--gold-glow);
-  margin-top: 20px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--gold-glow); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #d4b65e);
+  color: var(--bg-deep);
+  width: 100%;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--accent-glow);
+}
+
 .btn-primary:active { transform: translateY(0); }
 
-.btn-sm {
-  padding: 9px 16px;
-  border-radius: var(--r-sm);
-  background: var(--bg-3);
+.btn-secondary {
+  background: var(--bg-input);
   border: 1px solid var(--border);
-  color: var(--text-2);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
+  color: var(--text);
+  padding: 10px 18px;
+  font-size: 13px;
 }
-.btn-sm:hover { border-color: var(--gold-dim); color: var(--gold); }
 
-.hint { font-size: 10px; color: var(--text-3); text-align: center; margin-top: 7px; }
+.btn-secondary:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
+}
 
-/* ===== MODE SECTIONS ===== */
-.mode-section { display: none; }
-.mode-section.active { display: contents; }
+.btn-icon {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: var(--radius-sm);
+}
 
-/* ===== OUTPUT ===== */
-.output-area { margin-top: 20px; }
+.btn-icon:hover {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
 
-.platform-tabs {
+/* Output area */
+.output-section {
+  width: 100%;
+  max-width: 900px;
+}
+
+.output-tabs {
   display: flex;
   gap: 4px;
-  background: var(--bg-3);
-  border-radius: var(--r-sm);
+  margin-bottom: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
   padding: 4px;
-  margin-bottom: 14px;
   overflow-x: auto;
-  scrollbar-width: none;
 }
-.platform-tabs::-webkit-scrollbar { display: none; }
 
-.ptab {
-  padding: 8px 14px;
+.output-tab {
+  padding: 10px 20px;
   border: none;
   background: transparent;
-  color: var(--text-3);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: 7px;
+  color: var(--text-dim);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
 }
-.ptab:hover { color: var(--text-2); }
-.ptab.active { background: var(--gold); color: #07070d; }
+
+.output-tab:hover { color: var(--text); }
+
+.output-tab.active {
+  background: var(--accent);
+  color: var(--bg-deep);
+  font-weight: 700;
+}
 
 .output-box {
-  background: var(--bg-3);
+  background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 18px;
-  min-height: 160px;
+  border-radius: var(--radius);
+  padding: clamp(14px, 2vw, 20px);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  line-height: 1.9;
+  font-size: clamp(11px, 1.2vw, 13px);
+  line-height: 1.8;
   color: var(--text);
+  min-height: 180px;
   white-space: pre-wrap;
   word-break: break-word;
   direction: ltr;
   text-align: left;
   position: relative;
+  width: 100%;
   overflow-x: auto;
 }
 
-.output-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 140px;
-  color: var(--text-3);
-  gap: 10px;
+.output-box .placeholder {
+  color: var(--text-muted);
   font-family: 'Tajawal', sans-serif;
-  font-size: 14px;
-  direction: rtl;
   text-align: center;
-}
-
-.output-placeholder .placeholder-icon {
-  font-size: 36px;
-  opacity: 0.4;
-}
-
-.char-badge {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  color: var(--text-3);
-  text-align: left;
-  direction: ltr;
-  margin-top: 6px;
+  direction: rtl;
+  padding: 60px 20px;
+  font-size: 15px;
 }
 
 .output-actions {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+
+.copy-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--accent);
+  color: var(--bg-deep);
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 999;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.copy-toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Saved prompts */
+.saved-list {
+  max-height: 300px;
+  overflow-y: auto;
   margin-top: 12px;
 }
-
-/* ===== BG REMOVER ===== */
-.bg-remover-area {
-  margin-top: 20px;
-}
-
-.upload-zone {
-  border: 2px dashed var(--border-h);
-  border-radius: var(--r);
-  padding: 40px 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  background: var(--bg-3);
-  position: relative;
-}
-.upload-zone:hover, .upload-zone.dragover {
-  border-color: var(--gold);
-  background: var(--bg-4);
-}
-.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.upload-zone-icon { font-size: 40px; margin-bottom: 10px; }
-.upload-zone-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.upload-zone-sub { font-size: 12px; color: var(--text-3); }
-
-.bg-result-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.bg-panel {
-  border-radius: var(--r-sm);
-  overflow: hidden;
-  background: var(--bg-3);
-  border: 1px solid var(--border);
-}
-
-.bg-panel-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-3);
-  padding: 8px 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: 0.3px;
-}
-
-.bg-panel-img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
-  display: block;
-  background: repeating-conic-gradient(#ffffff0a 0% 25%, transparent 0% 50%) 0 0 / 20px 20px;
-}
-
-.bg-panel-img.original { background: #1a1a2e; }
-
-.bg-controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.bg-btn {
-  padding: 10px;
-  border-radius: var(--r-sm);
-  border: 1px solid var(--border);
-  background: var(--bg-3);
-  color: var(--text-2);
-  font-family: 'Tajawal', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.bg-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-.bg-btn.primary {
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  color: #07070d;
-  border-color: transparent;
-  grid-column: 1 / -1;
-  font-size: 14px;
-  padding: 12px;
-}
-
-/* Processing */
-.processing {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-2);
-  font-size: 14px;
-}
-.spinner {
-  width: 40px; height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 16px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ===== STATS ===== */
-.stats-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.stat-box {
-  flex: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 14px 12px;
-  text-align: center;
-}
-
-.stat-num {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--gold);
-  font-family: 'Syne', sans-serif;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 10px;
-  color: var(--text-3);
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-/* ===== SAVED ===== */
-.saved-card { margin-top: 20px; }
-
-.saved-list { max-height: 280px; overflow-y: auto; margin-top: 12px; }
 
 .saved-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 13px;
-  background: var(--bg-3);
+  justify-content: space-between;
+  padding: 12px;
+  background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  border-radius: var(--radius-sm);
   margin-bottom: 8px;
   cursor: pointer;
   transition: all 0.2s;
 }
-.saved-item:hover { border-color: var(--gold-dim); }
-.saved-item-info { flex: 1; min-width: 0; }
-.saved-item-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.saved-item-meta { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: 'Space Grotesk', sans-serif; }
-.saved-item-acts { display: flex; gap: 5px; }
 
-/* ===== TOAST ===== */
-.toast {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: linear-gradient(135deg, var(--gold), var(--gold-2));
-  color: #07070d;
-  padding: 11px 24px;
-  border-radius: 30px;
-  font-weight: 700;
-  font-size: 13px;
-  z-index: 9999;
-  transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-  pointer-events: none;
-  font-family: 'Tajawal', sans-serif;
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-
-/* ===== BADGE ===== */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  background: var(--gold);
-  color: #07070d;
-  border-radius: 9px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 0 5px;
-  margin-right: 4px;
+.saved-item:hover {
+  border-color: var(--accent-dim);
+  background: var(--bg-hover);
 }
 
-/* ===== DIVIDER ===== */
-.section-gap { margin-top: 20px; }
-
-/* ===== TIPS ===== */
-.tips-box {
-  background: var(--bg-4);
-  border: 1px solid var(--border);
-  border-right: 3px solid var(--gold);
-  border-radius: var(--r-sm);
-  padding: 14px;
-  margin-top: 14px;
+.saved-item-info {
+  flex: 1;
+  min-width: 0;
 }
-.tips-title { font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
-.tips-list { font-size: 11px; color: var(--text-2); line-height: 2; }
 
-/* ===== RESPONSIVE ===== */
-@media(max-width:600px) {
-  .header { padding: 24px 0 20px; }
-  .logo-icon { width: 44px; height: 44px; }
-  .logo-prompt, .logo-dot-in, .logo-short { font-size: 20px; }
-  .logo-tagline { font-size: 9px; letter-spacing: 1.5px; }
-  .stats-row { gap: 8px; }
-  .stat-num { font-size: 20px; }
-  .mode-btn { min-width: 80px; font-size: 12px; padding: 9px 10px; }
-  .output-actions { gap: 6px; }
-  .output-actions .btn-sm { font-size: 11px; padding: 8px 10px; }
-  .bg-result-grid { grid-template-columns: 1fr; }
-  .bg-controls { grid-template-columns: 1fr; }
-  .bg-btn.primary { grid-column: auto; }
+.saved-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.saved-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Footer watermark */
+.watermark {
+  text-align: center;
+  padding: 40px 20px 20px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.watermark span {
+  color: var(--accent-dim);
+  font-weight: 600;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-h); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Animations */
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
-.fade-in { animation: fadeUp 0.45s ease forwards; opacity:0; }
-.delay-1 { animation-delay: 0.08s; }
-.delay-2 { animation-delay: 0.16s; }
-.delay-3 { animation-delay: 0.24s; }
-.delay-4 { animation-delay: 0.32s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeUp 0.5s ease forwards;
+  opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* Counter badge */
+.counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  margin-right: 4px;
+}
+
+/* Avatar */
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(201,168,76,0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(201,168,76,0.2);
+}
+
+.avatar-sm {
+  width: 50px;
+  height: 50px;
+  border-width: 2px;
+}
+
+.header-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+.profile-info .name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.profile-info .bio {
+  font-size: 14px;
+  color: var(--text-dim);
+  max-width: 500px;
+  line-height: 1.7;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.profile-socials {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all 0.25s;
+}
+
+.social-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.footer-profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.footer-info {
+  text-align: right;
+}
+
+.footer-info .name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.footer-info .bio {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Mode Tabs */
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 20px;
+  background: var(--bg-input);
+  border-radius: 30px;
+  padding: 5px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Tajawal', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.mode-tab:hover { color: var(--text); }
+.mode-tab.active {
+  background: var(--accent);
+  color: var(--bg-deep);
+  font-weight: 700;
+}
+
+.mode-section { display: none; }
+.mode-section.active { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; max-width: 900px; margin: 0 auto; }
+.mode-section .full-width { width: 100%; }
+.mode-section .card { width: 100%; }
+
+.shortcut-hint { font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 6px; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  .app-container { padding: 10px; }
+  .header { padding: 30px 10px 20px; }
+  .header h1 { font-size: 26px; }
+  .card { padding: 18px; }
+  .row { grid-template-columns: 1fr; }
+  .output-tabs { flex-wrap: wrap; }
+  .output-tab { flex: 1; min-width: 70px; text-align: center; font-size: 11px; padding: 8px 8px; }
+  .output-actions { flex-wrap: wrap; }
+  .output-actions .btn-secondary { flex: 1; min-width: 60px; font-size: 11px; padding: 8px 8px; }
+  .mode-tabs { max-width: 100%; }
+  .mode-tab { font-size: 12px; padding: 8px 10px; }
+  .chips-container { gap: 6px; }
+  .chip { font-size: 11px; padding: 5px 10px; }
+  .theme-toggle { top: 12px; left: 12px; width: 38px; height: 38px; }
+  .lang-toggle { top: 12px; left: 58px; height: 38px; font-size: 11px; padding: 0 12px; }
+  .social-link { width: 36px; height: 36px; }
+  .field input, .field select, .field textarea { font-size: 16px; }
+}
+
 </style>
 </head>
 <body>
 
-<div class="bg-mesh"></div>
+<!-- Theme & Language Toggles -->
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="تبديل الثيم">🌙</button>
+<button class="lang-toggle" onclick="toggleLang()" id="langBtn" title="لغة البرومبت">🌐 EN</button>
 
-<div class="app">
-
-  <!-- HEADER -->
-  <div class="header fade-in">
-    <div class="logo-area">
-      <div class="logo-icon">
-        <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="lg1" x1="4" y1="4" x2="52" y2="52" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#f0c96e"/>
-              <stop offset="100%" stop-color="#b8872a"/>
-            </linearGradient>
-            <radialGradient id="rg1" cx="50%" cy="40%" r="55%">
-              <stop offset="0%" stop-color="#f0c96e" stop-opacity="0.18"/>
-              <stop offset="100%" stop-color="#d4a843" stop-opacity="0"/>
-            </radialGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="1.5" result="blur"/>
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-          </defs>
-          <rect x="2" y="2" width="52" height="52" rx="14" fill="#0c0c1a" stroke="url(#lg1)" stroke-width="1.2" opacity="0.9"/>
-          <rect x="2" y="2" width="52" height="52" rx="14" fill="url(#rg1)"/>
-          <path d="M10 2.5 L2.5 10" stroke="url(#lg1)" stroke-width="1" opacity="0.4"/>
-          <path d="M46 2.5 L53.5 10" stroke="url(#lg1)" stroke-width="1" opacity="0.4"/>
-          <path d="M10 53.5 L2.5 46" stroke="url(#lg1)" stroke-width="1" opacity="0.4"/>
-          <path d="M46 53.5 L53.5 46" stroke="url(#lg1)" stroke-width="1" opacity="0.4"/>
-          <g filter="url(#glow)">
-            <path d="M28 13 L33.5 20 L28 18.5 L22.5 20 Z" fill="url(#lg1)" opacity="0.95"/>
-            <rect x="26.2" y="18" width="3.6" height="14" rx="1.8" fill="url(#lg1)"/>
-            <rect x="18" y="38" width="20" height="3" rx="1.5" fill="url(#lg1)" opacity="0.55"/>
-            <rect x="31" y="38" width="3" height="3" rx="1" fill="url(#lg1)" opacity="0.9">
-              <animate attributeName="opacity" values="0.9;0.2;0.9" dur="1.4s" repeatCount="indefinite"/>
-            </rect>
-            <path d="M42 15 L43.2 18.8 L47 20 L43.2 21.2 L42 25 L40.8 21.2 L37 20 L40.8 18.8 Z" fill="url(#lg1)" opacity="0.8">
-              <animateTransform attributeName="transform" type="rotate" from="0 42 20" to="360 42 20" dur="8s" repeatCount="indefinite"/>
-            </path>
-          </g>
-        </svg>
-      </div>
-      <div class="logo-wordmark">
-        <div class="logo-name">
-          <span class="logo-prompt">Prompt</span><span class="logo-dot-in">.in</span><span class="logo-short">&nbsp;short</span>
+<div class="app-container">
+  <!-- Header -->
+  <div class="header animate-in">
+    <div class="header-badge">✦ PROMPT STUDIO</div>
+    <div class="header-profile">
+      <img src="data:image/webp;base64,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" alt="Turki AlSultan" class="avatar">
+      <div class="profile-info">
+        <div class="bio">صانع محتوى تقني وخبير في الذكاء الاصطناعي التوليدي · أصمم أدوات تساعدك تبدع باحترافية</div>
+        <div class="profile-socials">
+          <a href="https://x.com/Ksa8Turky" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://instagram.com/tech_live0" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="https://youtube.com/@tech_live0" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
         </div>
-        <div class="logo-tagline">AI Prompt Builder &middot; احترافي</div>
       </div>
     </div>
-    <div class="header-actions">
-      <div class="profile-pill">
-        <img src="data:image/webp;base64,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" alt="Turki" />
-        <span class="profile-pill-name">Ksa8Turky</span>
-      </div>
-      <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="تبديل الثيم">🌙</button>
-      <button class="icon-btn" onclick="toggleLang()" id="langBtn" title="لغة البرومبت" style="width:auto; padding: 0 12px; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700;">🌐 EN</button>
+    <h1>بناء البرومبت الاحترافي</h1>
+    <p>صمم برومبتات تصوير وفيديو وإعلانات وخط عربي لجميع منصات الذكاء الاصطناعي</p>
+
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="switchMode('photo', this)">📸 تصوير</button>
+      <button class="mode-tab" onclick="switchMode('video', this)">🎬 فيديو</button>
+      <button class="mode-tab" onclick="switchMode('calligraphy', this)">✒️ خط عربي</button>
+      <button class="mode-tab" onclick="switchMode('ads', this)">📢 إعلانات</button>
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-row fade-in delay-1">
-    <div class="stat-box">
-      <div class="stat-num" id="statGenerated">0</div>
-      <div class="stat-label">GENERATED</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="statCopied">0</div>
-      <div class="stat-label">COPIED</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="statSaved">0</div>
-      <div class="stat-label">SAVED</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-num" id="statShared">0</div>
-      <div class="stat-label">SHARED</div>
-    </div>
-  </div>
-
-  <!-- MODE SWITCHER -->
-  <div class="mode-switcher fade-in delay-2">
-    <button class="mode-btn active" onclick="switchMode('photo',this)">📸 تصوير</button>
-    <button class="mode-btn" onclick="switchMode('video',this)">🎬 فيديو</button>
-    <button class="mode-btn" onclick="switchMode('calligraphy',this)">✒️ خط عربي</button>
-    <button class="mode-btn" onclick="switchMode('bgremove',this)">✂️ إزالة الخلفية</button>
-  </div>
-
-  <!-- ===== PHOTO MODE ===== -->
-  <div class="mode-section active" id="modePhoto">
-    <div class="grid-2 fade-in delay-2">
-      <!-- Card 1: Subject -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">📸</div>
-          <span class="card-title-text">الموضوع الرئيسي</span>
-        </div>
-
-        <div class="field">
-          <label class="label">وصف المشهد</label>
-          <textarea id="subject" class="textarea" placeholder="مثال: رجل سعودي يرتدي ثوب أبيض يقف أمام برج المملكة عند غروب الشمس..."></textarea>
-        </div>
-
-        <div class="row-2">
-          <div class="field">
-            <label class="label">نوع التصوير</label>
-            <select id="photoType" class="select">
-              <option value="portrait">بورتريه - Portrait</option>
-              <option value="landscape">مناظر طبيعية</option>
-              <option value="street">تصوير شوارع</option>
-              <option value="product">تصوير منتجات</option>
-              <option value="food">تصوير طعام</option>
-              <option value="architecture">تصوير معماري</option>
-              <option value="macro">ماكرو - Macro</option>
-              <option value="fashion">تصوير أزياء</option>
-              <option value="cinematic">سينمائي</option>
-              <option value="aerial">تصوير جوي / درون</option>
-              <option value="conceptual">مفاهيمي</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">زاوية الكاميرا</label>
-            <select id="angle" class="select">
-              <option value="eye level">مستوى العين</option>
-              <option value="low angle">زاوية منخفضة</option>
-              <option value="high angle">زاوية عالية</option>
-              <option value="bird's eye view">من الأعلى</option>
-              <option value="dutch angle">مائلة - Dutch</option>
-              <option value="close-up">كلوز أب</option>
-              <option value="extreme close-up">كلوز أب شديد</option>
-              <option value="wide shot">لقطة واسعة</option>
-              <option value="over the shoulder">فوق الكتف</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row-3">
-          <div class="field">
-            <label class="label">الكاميرا</label>
-            <select id="cameraBody" class="select">
-              <option value="">بدون تحديد</option>
-              <option value="Canon EOS R5">Canon EOS R5</option>
-              <option value="Canon EOS R6 Mark II">Canon R6 Mark II</option>
-              <option value="Canon EOS R3">Canon EOS R3</option>
-              <option value="Nikon Z9">Nikon Z9</option>
-              <option value="Nikon Z8">Nikon Z8</option>
-              <option value="Sony A7R V">Sony A7R V</option>
-              <option value="Sony A1 II">Sony A1 II</option>
-              <option value="Sony FX3">Sony FX3 (Cinema)</option>
-              <option value="Fujifilm X-T5">Fujifilm X-T5</option>
-              <option value="Fujifilm GFX100S II">Fujifilm GFX100S II</option>
-              <option value="Leica M11">Leica M11</option>
-              <option value="Leica Q3 43">Leica Q3 43</option>
-              <option value="Hasselblad X2D 100C">Hasselblad X2D 100C</option>
-              <option value="Phase One XT">Phase One XT</option>
-              <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
-              <option value="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</option>
-              <option value="Google Pixel 9 Pro XL">Pixel 9 Pro XL</option>
-              <option value="DJI Mavic 4 Pro">DJI Mavic 4 Pro</option>
-              <option value="DJI Inspire 3">DJI Inspire 3</option>
-              <option value="RED V-Raptor XL 8K">RED V-Raptor XL 8K</option>
-              <option value="ARRI ALEXA 35">ARRI ALEXA 35</option>
-              <option value="Blackmagic URSA Cine 17K">Blackmagic URSA 17K</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">الإضاءة</label>
-            <select id="lighting" class="select">
-              <option value="golden hour sunlight">ساعة ذهبية</option>
-              <option value="blue hour twilight">ساعة زرقاء</option>
-              <option value="natural soft daylight">ضوء طبيعي</option>
-              <option value="dramatic studio lighting">إضاءة استوديو</option>
-              <option value="cinematic Rembrandt lighting">رامبرانت</option>
-              <option value="rim backlit lighting">خلفية محيطة</option>
-              <option value="neon city lights">نيون مدني</option>
-              <option value="moody low-key shadows">Low Key خافت</option>
-              <option value="high-key clean bright">High Key ساطع</option>
-              <option value="volumetric fog rays">ضوء ضبابي</option>
-              <option value="candlelight warm glow">ضوء شموع</option>
-              <option value="harsh midday sun">شمس الظهيرة</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">العدسة</label>
-            <select id="lens" class="select">
-              <option value="85mm f/1.2">85mm f/1.2 بورتريه</option>
-              <option value="50mm f/1.4">50mm f/1.4 قياسي</option>
-              <option value="35mm f/1.4">35mm f/1.4 واسع</option>
-              <option value="24mm f/2.8">24mm f/2.8</option>
-              <option value="100mm macro f/2.8">100mm Macro</option>
-              <option value="70-200mm f/2.8">70-200mm f/2.8</option>
-              <option value="16mm fisheye">16mm Fisheye</option>
-              <option value="135mm f/1.8">135mm f/1.8 بوكيه</option>
-              <option value="14mm ultra-wide">14mm Ultra-wide</option>
-              <option value="anamorphic 2x">Anamorphic 2x</option>
-              <option value="tilt-shift 45mm">Tilt-Shift 45mm</option>
-            </select>
-          </div>
-        </div>
+  <div class="main-grid">
+    <!-- ===== PHOTO MODE ===== -->
+    <div class="mode-section active" id="modePhoto">
+    <!-- Left: Builder -->
+    <div class="card animate-in delay-1">
+      <div class="card-title">
+        <div class="icon">📸</div>
+        الموضوع الرئيسي
       </div>
 
-      <!-- Card 2: Style -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">🎨</div>
-          <span class="card-title-text">الأسلوب والجودة</span>
-        </div>
-
-        <div class="field">
-          <label class="label">النمط البصري</label>
-          <div class="chips" id="styleChips">
-            <div class="chip active" data-value="cinematic">سينمائي</div>
-            <div class="chip" data-value="hyper-realistic">واقعي فائق</div>
-            <div class="chip" data-value="editorial">إديتوريال</div>
-            <div class="chip" data-value="vintage film grain">فيلم كلاسيكي</div>
-            <div class="chip" data-value="dark moody atmospheric">داكن درامي</div>
-            <div class="chip" data-value="soft dreamy ethereal">ناعم حالم</div>
-            <div class="chip" data-value="HDR vivid">HDR حي</div>
-            <div class="chip" data-value="minimalist">بسيط</div>
-            <div class="chip" data-value="luxury premium">فاخر</div>
-            <div class="chip" data-value="surreal dreamlike">سريالي</div>
-            <div class="chip" data-value="film noir">نوار</div>
-            <div class="chip" data-value="cyberpunk neon">سايبربنك</div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">لوحة الألوان</label>
-          <div class="chips" id="colorChips">
-            <div class="chip active" data-value="warm golden tones">دافئ ذهبي</div>
-            <div class="chip" data-value="cool blue tones">بارد أزرق</div>
-            <div class="chip" data-value="monochrome black and white">أبيض وأسود</div>
-            <div class="chip" data-value="muted earth tones">ترابي</div>
-            <div class="chip" data-value="vibrant saturated colors">حيوي مشبع</div>
-            <div class="chip" data-value="desaturated pastel muted">باستيل</div>
-            <div class="chip" data-value="black and gold luxury">أسود وذهبي</div>
-            <div class="chip" data-value="teal and orange cinematic grade">تيل وبرتقالي</div>
-          </div>
-        </div>
-
-        <div class="row-2">
-          <div class="field">
-            <label class="label">النسبة</label>
-            <select id="ratio" class="select">
-              <option value="16:9">16:9 سينمائي</option>
-              <option value="4:3">4:3 كلاسيكي</option>
-              <option value="1:1">1:1 مربع</option>
-              <option value="9:16">9:16 ستوري</option>
-              <option value="3:2">3:2 تصوير</option>
-              <option value="21:9">21:9 ألترا وايد</option>
-              <option value="4:5">4:5 إنستغرام</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">الجودة</label>
-            <select id="quality" class="select">
-              <option value="8K ultra-detailed masterpiece">8K ماسترpiece</option>
-              <option value="4K high quality sharp">4K عالي</option>
-              <option value="professional high resolution">دقة مهنية</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="label">تفاصيل إضافية</label>
-          <input type="text" id="extras" class="input" placeholder="بوكيه، انعكاسات، ضباب خفيف، تأثير سينمائي...">
-        </div>
-
-        <div class="field">
-          <label class="label">Negative Prompt</label>
-          <input type="text" id="negative" class="input" placeholder="blurry, low quality, watermark, deformed...">
-        </div>
-
-        <button class="btn-primary" onclick="generatePrompt()">✦ توليد البرومبت</button>
-        <div class="hint">⌨️ Ctrl + Enter للتوليد السريع</div>
+      <div class="field">
+        <label>وصف الموضوع</label>
+        <textarea id="subject" placeholder="مثال: رجل سعودي يرتدي ثوب أبيض يقف أمام برج المملكة عند غروب الشمس..."></textarea>
       </div>
-    </div>
-  </div>
 
-  <!-- ===== VIDEO MODE ===== -->
-  <div class="mode-section" id="modeVideo">
-    <div class="grid-2 fade-in delay-2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">🎬</div>
-          <span class="card-title-text">وصف الفيديو</span>
-        </div>
+      <div class="row">
         <div class="field">
-          <label class="label">وصف المشهد</label>
-          <textarea id="videoSubject" class="textarea" placeholder="كاميرا تتحرك ببطء فوق صحراء الربع الخالي عند غروب الشمس..."></textarea>
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label class="label">حركة الكاميرا</label>
-            <select id="cameraMotion" class="select">
-              <option value="slow cinematic pan right">بان بطيء يمين</option>
-              <option value="slow cinematic pan left">بان بطيء يسار</option>
-              <option value="smooth dolly zoom in">زوم تقدمي</option>
-              <option value="smooth dolly zoom out">زوم تراجعي</option>
-              <option value="tracking shot following subject">تتبع الهدف</option>
-              <option value="majestic aerial flyover">تحليق جوي</option>
-              <option value="elegant orbit around subject">دوران حول الهدف</option>
-              <option value="crane shot rising up">رافعة صاعدة</option>
-              <option value="handheld authentic shaky">يدوي متحرك</option>
-              <option value="static locked tripod shot">ثابت تام</option>
-              <option value="immersive first person POV">منظور أول</option>
-              <option value="cinematic timelapse">تايم لابس</option>
-              <option value="ultra slow motion 4x">حركة بطيئة 4x</option>
-              <option value="hyperlapse moving forward">هايبرلابس</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">المدة</label>
-            <select id="videoDuration" class="select">
-              <option value="5 seconds">5 ثوانٍ</option>
-              <option value="8 seconds">8 ثوانٍ</option>
-              <option value="10 seconds">10 ثوانٍ</option>
-              <option value="15 seconds">15 ثانية</option>
-              <option value="21 seconds">21 ثانية</option>
-              <option value="30 seconds">30 ثانية</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">🎥</div>
-          <span class="card-title-text">أسلوب الفيديو</span>
-        </div>
-        <div class="field">
-          <label class="label">النمط</label>
-          <select id="videoStyle" class="select">
-            <option value="cinematic film anamorphic">سينمائي أنامورفيك</option>
-            <option value="documentary realistic">وثائقي واقعي</option>
-            <option value="luxury brand commercial">إعلان فاخر</option>
-            <option value="music video stylized">كليب موسيقي</option>
-            <option value="aerial drone footage">تصوير درون</option>
-            <option value="anime 2.5D">أنمي 2.5D</option>
-            <option value="photorealistic 3D CGI">3D CGI واقعي</option>
-            <option value="vintage VHS aesthetic">VHS كلاسيكي</option>
-            <option value="hyper-realistic">واقعي فائق</option>
-            <option value="lo-fi aesthetic">Lo-fi</option>
+          <label>نوع التصوير</label>
+          <select id="photoType">
+            <option value="portrait">بورتريه - Portrait</option>
+            <option value="landscape">مناظر طبيعية - Landscape</option>
+            <option value="street">تصوير شوارع - Street</option>
+            <option value="product">تصوير منتجات - Product</option>
+            <option value="food">تصوير طعام - Food</option>
+            <option value="architecture">تصوير معماري - Architecture</option>
+            <option value="macro">ماكرو - Macro</option>
+            <option value="fashion">تصوير أزياء - Fashion</option>
+            <option value="cinematic">سينمائي - Cinematic</option>
+            <option value="aerial">تصوير جوي - Aerial/Drone</option>
+            <option value="conceptual">مفاهيمي - Conceptual Art</option>
           </select>
         </div>
         <div class="field">
-          <label class="label">المنصة المستهدفة</label>
-          <select id="videoTarget" class="select">
-            <option value="">كل المنصات</option>
-            <option value="Google Veo 3.1">Google Veo 3.1 ★ الأفضل</option>
-            <option value="Kling 3.0">Kling 3.0 — Multi-Shot 4K</option>
-            <option value="Runway Gen-4.5">Runway Gen-4.5 — Pro Control</option>
-            <option value="Seedance 2.0">Seedance 2.0 — ByteDance</option>
-            <option value="Pika 2.5">Pika 2.5 — Pikaffects</option>
-            <option value="Luma Ray3">Luma Ray3 — 4K HDR</option>
-            <option value="Hailuo MiniMax 2.3">Hailuo 2.3</option>
-            <option value="Wan 2.6">Wan 2.6 — Alibaba</option>
-            <option value="LTX-2">LTX-2 — Open Source</option>
+          <label>زاوية الكاميرا</label>
+          <select id="angle">
+            <option value="eye level">مستوى العين - Eye Level</option>
+            <option value="low angle">زاوية منخفضة - Low Angle</option>
+            <option value="high angle">زاوية عالية - High Angle</option>
+            <option value="bird's eye view">من الأعلى - Bird's Eye</option>
+            <option value="dutch angle">زاوية مائلة - Dutch Angle</option>
+            <option value="close-up">كلوز أب - Close-up</option>
+            <option value="extreme close-up">كلوز أب شديد - Extreme Close-up</option>
+            <option value="wide shot">لقطة واسعة - Wide Shot</option>
+            <option value="over the shoulder">من فوق الكتف - Over Shoulder</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>نوع الكاميرا</label>
+          <select id="cameraBody">
+            <option value="">بدون تحديد</option>
+            <option value="Canon EOS R5">Canon EOS R5</option>
+            <option value="Canon EOS R6 Mark II">Canon EOS R6 II</option>
+            <option value="Canon EOS 5D Mark IV">Canon 5D Mark IV</option>
+            <option value="Nikon Z9">Nikon Z9</option>
+            <option value="Nikon Z8">Nikon Z8</option>
+            <option value="Nikon D850">Nikon D850</option>
+            <option value="Sony A7R V">Sony A7R V</option>
+            <option value="Sony A7 IV">Sony A7 IV</option>
+            <option value="Sony A1">Sony A1</option>
+            <option value="Fujifilm X-T5">Fujifilm X-T5</option>
+            <option value="Fujifilm GFX 100S">Fujifilm GFX 100S</option>
+            <option value="Leica M11">Leica M11</option>
+            <option value="Leica Q3">Leica Q3</option>
+            <option value="Hasselblad X2D">Hasselblad X2D</option>
+            <option value="iPhone 16 Pro Max">iPhone 16 Pro Max</option>
+            <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+            <option value="Samsung Galaxy S25 Ultra">Galaxy S25 Ultra</option>
+            <option value="Samsung Galaxy S24 Ultra">Galaxy S24 Ultra</option>
+            <option value="Google Pixel 9 Pro">Pixel 9 Pro</option>
+            <option value="DJI Mavic 3 Pro">DJI Mavic 3 Pro (درون)</option>
+            <option value="GoPro HERO 13">GoPro HERO 13</option>
+            <option value="RED V-Raptor">RED V-Raptor (سينما)</option>
+            <option value="ARRI ALEXA 35">ARRI ALEXA 35 (سينما)</option>
           </select>
         </div>
         <div class="field">
-          <label class="label">تفاصيل إضافية</label>
-          <input type="text" id="videoExtras" class="input" placeholder="ألوان دافئة، ضباب خفيف، موسيقى هادئة...">
-        </div>
-        <button class="btn-primary" onclick="generateVideoPrompt()">🎬 توليد برومبت الفيديو</button>
-        <div class="hint">⌨️ Ctrl + Enter</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== CALLIGRAPHY MODE ===== -->
-  <div class="mode-section" id="modeCalligraphy">
-    <div class="grid-2 fade-in delay-2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">✒️</div>
-          <span class="card-title-text">النص والخط</span>
-        </div>
-        <div class="field">
-          <label class="label">النص العربي</label>
-          <input type="text" id="calliText" class="input" placeholder="بسم الله الرحمن الرحيم">
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label class="label">نوع الخط</label>
-            <select id="calliStyle" class="select">
-              <option value="classical Ottoman Thuluth">ثلث عثماني</option>
-              <option value="traditional Naskh">نسخ تقليدي</option>
-              <option value="ornate Diwani Jali">ديواني جلي</option>
-              <option value="flowing Diwani">ديواني متدفق</option>
-              <option value="traditional Ruqaa">رقعة</option>
-              <option value="elegant Farsi Nastaliq">فارسي نستعليق</option>
-              <option value="geometric Kufic">كوفي هندسي</option>
-              <option value="modern Arabic typography">تايبوغرافي حديث</option>
-              <option value="ornate Maghribi">مغربي زخرفي</option>
-              <option value="decorative Ijazah">إجازة</option>
-            </select>
-          </div>
-          <div class="field">
-            <label class="label">المادة / السطح</label>
-            <select id="calliMaterial" class="select">
-              <option value="gold leaf ink on dark paper">ذهب على ورق داكن</option>
-              <option value="traditional ink on aged parchment">حبر على رق قديم</option>
-              <option value="carved in white marble">منقوش رخام أبيض</option>
-              <option value="engraved on crystal glass">محفور زجاج كريستال</option>
-              <option value="glowing neon light on dark wall">نيون على جدار</option>
-              <option value="liquid chrome metallic 3D">كروم معدني 3D</option>
-              <option value="vibrant watercolor on textured paper">ألوان مائية</option>
-              <option value="calligraphy drawn in desert sand">خط على الرمل</option>
-              <option value="embossed premium leather">جلد مضغوط</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">🖼️</div>
-          <span class="card-title-text">الخلفية والتصميم</span>
-        </div>
-        <div class="field">
-          <label class="label">الخلفية</label>
-          <select id="calliBg" class="select">
-            <option value="dark luxury gradient background">تدرج داكن فاخر</option>
-            <option value="grand mosque interior with ornate arches">داخل مسجد بأقواس</option>
-            <option value="dramatic starry night sky milky way">سماء مجرة درب التبانة</option>
-            <option value="intricate geometric Islamic tilework pattern">زخرفة إسلامية هندسية</option>
-            <option value="clean minimal white background">أبيض نقي بسيط</option>
-            <option value="Riyadh Kingdom Tower skyline golden sunset">أفق الرياض غروب</option>
-            <option value="flowing desert sand dunes golden light">كثبان رملية ذهبية</option>
-            <option value="ornate floral arabesque illuminated manuscript">زخارف نباتية عربية</option>
+          <label>الإضاءة</label>
+          <select id="lighting">
+            <option value="golden hour">الساعة الذهبية - Golden Hour</option>
+            <option value="blue hour">الساعة الزرقاء - Blue Hour</option>
+            <option value="natural daylight">ضوء طبيعي - Natural Light</option>
+            <option value="studio lighting">إضاءة استوديو - Studio</option>
+            <option value="dramatic side lighting">إضاءة جانبية درامية - Side Light</option>
+            <option value="backlit / rim lighting">إضاءة خلفية - Backlit</option>
+            <option value="neon lighting">إضاءة نيون - Neon</option>
+            <option value="moody low-key">إضاءة خافتة - Low Key</option>
+            <option value="high-key bright">إضاءة ساطعة - High Key</option>
+            <option value="volumetric fog lighting">إضاءة ضبابية - Volumetric</option>
+            <option value="candlelight">ضوء شموع - Candlelight</option>
           </select>
         </div>
         <div class="field">
-          <label class="label">تفاصيل إضافية</label>
-          <input type="text" id="calliExtras" class="input" placeholder="تأثير ذهبي، إضاءة دافئة، تفاصيل دقيقة...">
+          <label>العدسة</label>
+          <select id="lens">
+            <option value="85mm f/1.4">85mm f/1.4 - بورتريه</option>
+            <option value="50mm f/1.8">50mm f/1.8 - قياسي</option>
+            <option value="35mm f/1.4">35mm f/1.4 - واسعة</option>
+            <option value="24mm f/2.8">24mm f/2.8 - واسعة جداً</option>
+            <option value="100mm macro">100mm Macro - ماكرو</option>
+            <option value="70-200mm f/2.8">70-200mm f/2.8 - تيلي</option>
+            <option value="16mm fisheye">16mm Fisheye - عين السمكة</option>
+            <option value="135mm f/2">135mm f/2 - بوكيه</option>
+            <option value="14mm ultra-wide">14mm Ultra-wide</option>
+          </select>
         </div>
-        <button class="btn-primary" onclick="generateCalliPrompt()">✒️ توليد برومبت الخط</button>
-        <div class="hint">⌨️ Ctrl + Enter</div>
       </div>
     </div>
-  </div>
 
-  <!-- ===== BG REMOVE MODE ===== -->
-  <div class="mode-section" id="modeBgremove">
-    <div class="grid-2 fade-in delay-2">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">✂️</div>
-          <span class="card-title-text">إزالة الخلفية — أوف لاين</span>
-        </div>
-        <p style="font-size:12px; color:var(--text-2); margin-bottom:14px; line-height:1.7;">
-          المعالجة تتم <strong style="color:var(--gold)">بالكامل في متصفحك</strong> — لا يُرسل أي ملف للسيرفر. يعمل بدون إنترنت بعد أول استخدام.
-        </p>
+    <!-- Right: Style & Details -->
+    <div class="card animate-in delay-2">
+      <div class="card-title">
+        <div class="icon">🎨</div>
+        الأسلوب والتفاصيل
+      </div>
 
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" accept="image/*" id="fileInput" onchange="handleFile(event)">
-          <div class="upload-zone-icon">🖼️</div>
-          <div class="upload-zone-title">اسحب صورتك هنا أو انقر للاختيار</div>
-          <div class="upload-zone-sub">PNG / JPG / WEBP · حتى 10MB</div>
-        </div>
-
-        <div id="bgRemoveStatus" style="display:none;" class="processing">
-          <div class="spinner"></div>
-          <div id="bgStatusText">جاري تحميل النموذج...</div>
-        </div>
-
-        <div id="bgControls" style="display:none; margin-top:14px;">
-          <div class="bg-controls">
-            <button class="bg-btn" onclick="changeBackground('#ffffff')">⬜ أبيض</button>
-            <button class="bg-btn" onclick="changeBackground('#000000')">⬛ أسود</button>
-            <button class="bg-btn" onclick="changeBackground('transparent')">◻️ شفاف</button>
-            <button class="bg-btn" onclick="changeBackground('custom')">🎨 لون مخصص</button>
-            <input type="color" id="customBgColor" value="#1a1a2e" style="display:none;width:100%;height:40px;border:none;border-radius:8px;cursor:pointer;" onchange="changeBackground(this.value)">
-            <button class="bg-btn primary" onclick="downloadResult()">⬇️ تحميل PNG</button>
-          </div>
+      <div class="field">
+        <label>النمط البصري</label>
+        <div class="chips-container" id="styleChips">
+          <div class="chip active" data-value="cinematic">سينمائي</div>
+          <div class="chip" data-value="hyper-realistic">واقعي فائق</div>
+          <div class="chip" data-value="editorial">إديتوريال</div>
+          <div class="chip" data-value="vintage film">فيلم كلاسيكي</div>
+          <div class="chip" data-value="dark moody">داكن درامي</div>
+          <div class="chip" data-value="soft dreamy">ناعم حالم</div>
+          <div class="chip" data-value="HDR vivid">HDR حي</div>
+          <div class="chip" data-value="minimalist">بسيط</div>
+          <div class="chip" data-value="luxury premium">فاخر</div>
+          <div class="chip" data-value="surreal">سريالي</div>
+          <div class="chip" data-value="noir">نوار</div>
+          <div class="chip" data-value="cyberpunk">سايبربنك</div>
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon">👁️</div>
-          <span class="card-title-text">المعاينة</span>
+      <div class="field">
+        <label>لوحة الألوان</label>
+        <div class="chips-container" id="colorChips">
+          <div class="chip active" data-value="warm tones">ألوان دافئة</div>
+          <div class="chip" data-value="cool tones">ألوان باردة</div>
+          <div class="chip" data-value="monochrome">أحادي اللون</div>
+          <div class="chip" data-value="muted earth tones">ترابي</div>
+          <div class="chip" data-value="vibrant saturated">حيوي مشبع</div>
+          <div class="chip" data-value="desaturated pastel">باستيل</div>
+          <div class="chip" data-value="black and gold">أسود وذهبي</div>
+          <div class="chip" data-value="teal and orange">تيل وبرتقالي</div>
         </div>
+      </div>
 
-        <div id="bgPreviewArea">
-          <div style="text-align:center; padding:60px 20px; color:var(--text-3);">
-            <div style="font-size:40px; margin-bottom:10px; opacity:0.4;">✂️</div>
-            <div style="font-size:13px;">ارفع صورة لبدء إزالة الخلفية</div>
-          </div>
+      <div class="row">
+        <div class="field">
+          <label>الدقة / النسبة</label>
+          <select id="ratio">
+            <option value="16:9">16:9 سينمائي</option>
+            <option value="4:3">4:3 كلاسيكي</option>
+            <option value="1:1">1:1 مربع</option>
+            <option value="9:16">9:16 ستوري</option>
+            <option value="3:2">3:2 تصوير</option>
+            <option value="21:9">21:9 ألترا وايد</option>
+          </select>
         </div>
+        <div class="field">
+          <label>الجودة</label>
+          <select id="quality">
+            <option value="8K ultra-detailed">8K فائق التفاصيل</option>
+            <option value="4K high quality">4K عالي الجودة</option>
+            <option value="high resolution detailed">دقة عالية مفصل</option>
+          </select>
+        </div>
+      </div>
 
-        <canvas id="resultCanvas" style="display:none; width:100%; border-radius:10px;"></canvas>
+      <div class="field">
+        <label>تفاصيل إضافية (اختياري)</label>
+        <input type="text" id="extras" placeholder="مثال: خلفية ضبابية، انعكاسات، ظلال ناعمة، تأثير بوكيه...">
+      </div>
+
+      <div class="field">
+        <label>Negative Prompt (ما لا تريده)</label>
+        <input type="text" id="negative" placeholder="مثال: blurry, low quality, watermark, text, deformed...">
+      </div>
+
+      <div style="margin-top: 24px;">
+        <button class="btn btn-primary" onclick="generatePrompt()">
+          ✦ توليد البرومبت
+        </button>
+        <div class="shortcut-hint">⌨️ Ctrl + Enter للتوليد السريع</div>
       </div>
     </div>
-  </div>
+    </div><!-- end modePhoto -->
 
-  <!-- OUTPUT AREA (all modes except bg remove) -->
-  <div class="output-area fade-in delay-3" id="outputSection">
+    <!-- ===== VIDEO MODE ===== -->
+    <div class="mode-section" id="modeVideo">
     <div class="card">
-      <div class="card-header">
-        <div class="card-icon">⚡</div>
-        <span class="card-title-text">البرومبت الجاهز</span>
+      <div class="card-title"><div class="icon">🎬</div> وصف الفيديو</div>
+      <div class="field">
+        <label>وصف المشهد</label>
+        <textarea id="videoSubject" placeholder="مثال: كاميرا تتحرك ببطء فوق صحراء الربع الخالي عند غروب الشمس مع ظلال الكثبان الرملية..."></textarea>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>حركة الكاميرا</label>
+          <select id="cameraMotion">
+            <option value="slow pan right">بان بطيء يمين</option>
+            <option value="slow pan left">بان بطيء يسار</option>
+            <option value="dolly zoom in">زوم تقدمي</option>
+            <option value="dolly zoom out">زوم تراجعي</option>
+            <option value="tracking shot following subject">تتبع الهدف</option>
+            <option value="aerial flyover">تحليق جوي</option>
+            <option value="orbiting around subject">دوران حول الهدف</option>
+            <option value="crane shot rising up">رافعة صاعدة</option>
+            <option value="handheld shaky">يدوي متحرك</option>
+            <option value="static locked tripod">ثابت على حامل</option>
+            <option value="first person POV">منظور الشخص الأول</option>
+            <option value="timelapse">تايم لابس</option>
+            <option value="slow motion">حركة بطيئة</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>المدة</label>
+          <select id="videoDuration">
+            <option value="5 seconds">٥ ثوان</option>
+            <option value="10 seconds">١٠ ثوان</option>
+            <option value="15 seconds">١٥ ثانية</option>
+            <option value="21 seconds">٢١ ثانية</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon">🎨</div> أسلوب الفيديو</div>
+      <div class="field">
+        <label>النمط</label>
+        <select id="videoStyle">
+          <option value="cinematic film">سينمائي</option>
+          <option value="documentary">وثائقي</option>
+          <option value="music video">كليب موسيقي</option>
+          <option value="commercial ad">إعلان تجاري</option>
+          <option value="drone footage">تصوير درون</option>
+          <option value="anime">أنمي</option>
+          <option value="3D render">3D ريندر</option>
+          <option value="vintage VHS">VHS كلاسيكي</option>
+          <option value="hyper-realistic">واقعي فائق</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>تفاصيل إضافية</label>
+        <input type="text" id="videoExtras" placeholder="مثال: ألوان دافئة، ضباب خفيف، موسيقى هادئة...">
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="generateVideoPrompt()">🎬 توليد برومبت الفيديو</button>
+        <div class="shortcut-hint">⌨️ Ctrl + Enter للتوليد السريع</div>
+      </div>
+    </div>
+    </div><!-- end modeVideo -->
+
+    <!-- ===== CALLIGRAPHY MODE ===== -->
+    <div class="mode-section" id="modeCalligraphy">
+    <div class="card">
+      <div class="card-title"><div class="icon">✒️</div> النص والخط</div>
+      <div class="field">
+        <label>النص العربي</label>
+        <input type="text" id="calliText" placeholder="مثال: بسم الله الرحمن الرحيم">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>نوع الخط</label>
+          <select id="calliStyle">
+            <option value="Thuluth">ثلث</option>
+            <option value="Naskh">نسخ</option>
+            <option value="Diwani">ديواني</option>
+            <option value="Diwani Jali">ديواني جلي</option>
+            <option value="Ruqaa">رقعة</option>
+            <option value="Farsi/Taliq">فارسي / تعليق</option>
+            <option value="Kufi">كوفي</option>
+            <option value="Kufi Geometric">كوفي هندسي</option>
+            <option value="Maghribi">مغربي</option>
+            <option value="Ijazah">إجازة</option>
+            <option value="Modern Arabic Typography">تايبوغرافي عربي حديث</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>المادة / السطح</label>
+          <select id="calliMaterial">
+            <option value="gold leaf on dark paper">ذهب على ورق داكن</option>
+            <option value="ink on aged parchment">حبر على رق قديم</option>
+            <option value="carved in marble">منقوش على رخام</option>
+            <option value="engraved on glass">محفور على زجاج</option>
+            <option value="neon light on wall">نيون على جدار</option>
+            <option value="3D chrome metallic">كروم معدني 3D</option>
+            <option value="watercolor on textured paper">ألوان مائية</option>
+            <option value="sand calligraphy">خط على الرمل</option>
+            <option value="embossed leather">جلد مضغوط</option>
+            <option value="wood burning pyrography">حرق على خشب</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="icon">🎨</div> التصميم</div>
+      <div class="field">
+        <label>الخلفية</label>
+        <select id="calliBg">
+          <option value="dark elegant gradient">تدرج داكن فاخر</option>
+          <option value="mosque interior with arches">داخل مسجد بأقواس</option>
+          <option value="starry night sky">سماء مليئة بالنجوم</option>
+          <option value="geometric Islamic pattern">زخرفة إسلامية هندسية</option>
+          <option value="minimal white">أبيض بسيط</option>
+          <option value="Riyadh skyline sunset">أفق الرياض عند الغروب</option>
+          <option value="desert sand dunes">كثبان رملية</option>
+          <option value="floral arabesque ornaments">زخارف نباتية عربية</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>تفاصيل إضافية</label>
+        <input type="text" id="calliExtras" placeholder="مثال: تأثير ذهبي، إضاءة دافئة، تفاصيل دقيقة...">
+      </div>
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="generateCalliPrompt()">✒️ توليد برومبت الخط</button>
+        <div class="shortcut-hint">⌨️ Ctrl + Enter للتوليد السريع</div>
+      </div>
+    </div>
+    </div><!-- end modeCalligraphy -->
+
+    <!-- ===== ADS MODE ===== -->
+    <div class="mode-section" id="modeAds">
+    <div class="card">
+      <div class="card-title"><div class="icon">📢</div> تفاصيل الإعلان</div>
+
+      <div class="field">
+        <label>المنتج / الخدمة</label>
+        <input type="text" id="adProduct" placeholder="مثال: ساعة ذكية، عطر فاخر، تطبيق توصيل، مطعم...">
       </div>
 
-      <div class="platform-tabs" id="outputTabs">
-        <button class="ptab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney V8.1</button>
-        <button class="ptab" data-platform="gptimage" onclick="switchTab(this)">GPT Image 2</button>
-        <button class="ptab" data-platform="nanobanana" onclick="switchTab(this)">Imagen 4 Ultra</button>
-        <button class="ptab" data-platform="nbpro" onclick="switchTab(this)">Nano Banana Pro</button>
-        <button class="ptab" data-platform="nb2" onclick="switchTab(this)">Nano Banana 2</button>
-        <button class="ptab" data-platform="flux" onclick="switchTab(this)">FLUX.2 Dev</button>
-        <button class="ptab" data-platform="ideogram" onclick="switchTab(this)">Ideogram 3.0</button>
-        <button class="ptab" data-platform="adobe" onclick="switchTab(this)">Firefly Image 3</button>
-        <button class="ptab" data-platform="leonardo" onclick="switchTab(this)">Leonardo Phoenix</button>
-        <button class="ptab" data-platform="grok" onclick="switchTab(this)">Grok Aurora 2</button>
-        <button class="ptab" data-platform="sd" onclick="switchTab(this)">SD 3.5 Large</button>
+      <div class="field">
+        <label>وصف المنتج</label>
+        <textarea id="adDescription" placeholder="مثال: ساعة ذكية أنيقة بتصميم معدني فضي مع شاشة AMOLED وسوار جلدي..."></textarea>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>نوع الإعلان</label>
+          <select id="adType">
+            <option value="product showcase on elegant surface">عرض منتج (Product Showcase)</option>
+            <option value="lifestyle scene with model using product">لايف ستايل (Lifestyle)</option>
+            <option value="flat lay arrangement top-down view">فلات لاي (Flat Lay)</option>
+            <option value="before and after comparison split">قبل وبعد (Before & After)</option>
+            <option value="hero banner with bold text space">بانر رئيسي (Hero Banner)</option>
+            <option value="social media story vertical format">ستوري سوشال ميديا</option>
+            <option value="carousel multi-slide ad format">كاروسيل (Carousel)</option>
+            <option value="unboxing product reveal">أنبوكسينق (Unboxing)</option>
+            <option value="product in action being used">المنتج أثناء الاستخدام</option>
+            <option value="seasonal promotional holiday themed">موسمي / عروض (Seasonal)</option>
+            <option value="food photography appetizing close-up">تصوير طعام (Food Ad)</option>
+            <option value="real estate luxury property showcase">عقارات (Real Estate)</option>
+            <option value="fashion editorial model wearing product">أزياء (Fashion Ad)</option>
+            <option value="automotive car in dramatic setting">سيارات (Automotive)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>منصة النشر</label>
+          <select id="adPlatform">
+            <option value="Instagram Post (1080x1080)">إنستقرام بوست</option>
+            <option value="Instagram Story (1080x1920)">إنستقرام ستوري</option>
+            <option value="Instagram Reels Cover (1080x1920)">ريلز كفر</option>
+            <option value="TikTok (1080x1920)">تيك توك</option>
+            <option value="X/Twitter Post (1200x675)">X / تويتر</option>
+            <option value="Facebook Ad (1200x628)">فيسبوك إعلان</option>
+            <option value="YouTube Thumbnail (1280x720)">يوتيوب ثمب نيل</option>
+            <option value="Snapchat Ad (1080x1920)">سناب شات</option>
+            <option value="LinkedIn Post (1200x627)">لينكد إن</option>
+            <option value="Google Display Ad (1200x628)">إعلان قوقل</option>
+            <option value="Website Banner (1920x600)">بانر موقع</option>
+            <option value="Print Ad (A4 portrait)">إعلان مطبوع</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>الجمهور المستهدف</label>
+          <select id="adAudience">
+            <option value="luxury premium upscale audience">فئة فاخرة (Luxury)</option>
+            <option value="young trendy Gen-Z audience">شباب وترندي (Gen-Z)</option>
+            <option value="professional business audience">رجال أعمال (Professional)</option>
+            <option value="families and parents">عائلات وأولياء أمور</option>
+            <option value="health and fitness enthusiasts">مهتمين باللياقة والصحة</option>
+            <option value="tech-savvy early adopters">محبي التقنية</option>
+            <option value="women beauty and fashion">نساء - جمال وأزياء</option>
+            <option value="Saudi local market audience">السوق السعودي المحلي</option>
+            <option value="Gulf Arab market">سوق الخليج العربي</option>
+            <option value="general broad audience">جمهور عام</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>المزاج / الإحساس</label>
+          <select id="adMood">
+            <option value="premium luxury elegant">فاخر وأنيق</option>
+            <option value="bold energetic vibrant">جريء ونشيط</option>
+            <option value="warm cozy inviting">دافئ ومريح</option>
+            <option value="clean minimal modern">نظيف وبسيط</option>
+            <option value="dark dramatic cinematic">داكن وسينمائي</option>
+            <option value="playful fun colorful">مرح وملون</option>
+            <option value="natural organic earthy">طبيعي وعضوي</option>
+            <option value="futuristic tech sleek">مستقبلي وتقني</option>
+            <option value="nostalgic retro vintage">كلاسيكي ونوستالجي</option>
+            <option value="trustworthy professional corporate">موثوق ورسمي</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon">🎨</div> الأسلوب الإعلاني</div>
+
+      <div class="row">
+        <div class="field">
+          <label>لوحة الألوان</label>
+          <select id="adColors">
+            <option value="black and gold luxury">أسود وذهبي (فاخر)</option>
+            <option value="white and rose gold elegant">أبيض وروز قولد</option>
+            <option value="bold red and black">أحمر وأسود (جريء)</option>
+            <option value="ocean blue and white clean">أزرق وأبيض (نظيف)</option>
+            <option value="earth tones warm brown beige">ترابي دافئ</option>
+            <option value="neon vibrant gradient">نيون متدرج</option>
+            <option value="pastel soft aesthetic">باستيل ناعم</option>
+            <option value="monochrome grayscale">أحادي رمادي</option>
+            <option value="green and white Saudi national">أخضر وأبيض (وطني)</option>
+            <option value="purple and magenta creative">بنفسجي وماجنتا</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الإضاءة</label>
+          <select id="adLighting">
+            <option value="studio softbox professional lighting">استوديو احترافي</option>
+            <option value="natural window light soft shadows">ضوء طبيعي من نافذة</option>
+            <option value="dramatic spotlight dark background">سبوت لايت درامي</option>
+            <option value="golden hour warm sunset glow">الساعة الذهبية</option>
+            <option value="neon colored accent lighting">إضاءة نيون ملونة</option>
+            <option value="bright high-key white background">ساطع خلفية بيضاء</option>
+            <option value="moody low-key atmospheric">خافت وجوي</option>
+            <option value="ring light beauty lighting">رينق لايت</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>نص الإعلان (اختياري - يظهر في الصورة)</label>
+        <input type="text" id="adText" placeholder="مثال: خصم 50% | اطلب الآن | عرض محدود...">
+      </div>
+
+      <div class="field">
+        <label>تفاصيل إضافية</label>
+        <input type="text" id="adExtras" placeholder="مثال: لوجو في الزاوية، QR code، خلفية ضبابية...">
+      </div>
+
+      <div style="margin-top:20px;">
+        <button class="btn btn-primary" onclick="generateAdPrompt()" style="background: linear-gradient(135deg, #e04848, var(--accent));">📢 توليد برومبت الإعلان</button>
+        <div class="shortcut-hint">⌨️ Ctrl + Enter للتوليد السريع</div>
+      </div>
+    </div>
+    </div><!-- end modeAds -->
+
+    <!-- Output Section -->
+    <div class="card output-section animate-in delay-3">
+      <div class="card-title">
+        <div class="icon">⚡</div>
+        البرومبت الجاهز
+      </div>
+
+      <div class="output-tabs" id="outputTabs">
+        <button class="output-tab active" data-platform="midjourney" onclick="switchTab(this)">Midjourney V7</button>
+        <button class="output-tab" data-platform="gptimage" onclick="switchTab(this)">GPT Image</button>
+        <button class="output-tab" data-platform="nanobanana" onclick="switchTab(this)">Nano Banana Pro</button>
+        <button class="output-tab" data-platform="leonardo" onclick="switchTab(this)">Leonardo AI</button>
+        <button class="output-tab" data-platform="ideogram" onclick="switchTab(this)">Ideogram</button>
+        <button class="output-tab" data-platform="grok" onclick="switchTab(this)">Grok</button>
+        <button class="output-tab" data-platform="flux" onclick="switchTab(this)">Flux</button>
       </div>
 
       <div class="output-box" id="outputBox">
-        <div class="output-placeholder">
-          <div class="placeholder-icon">✦</div>
-          <div>قم بتعبئة الحقول ثم اضغط "توليد البرومبت"</div>
+        <div class="placeholder">
+          ✦ قم بتعبئة الحقول ثم اضغط "توليد البرومبت" للحصول على برومبت احترافي
         </div>
       </div>
 
-      <div class="char-badge" id="charCount"></div>
+      <div class="char-count" id="charCount"></div>
 
       <div class="output-actions" id="outputActions" style="display:none;">
-        <button class="btn-sm" onclick="copyPrompt()">📋 نسخ</button>
-        <button class="btn-sm" onclick="sharePrompt()">🔗 مشاركة</button>
-        <button class="btn-sm" onclick="exportTXT()">📄 TXT</button>
-        <button class="btn-sm" onclick="exportPDF()">📕 PDF</button>
-        <button class="btn-sm" onclick="savePrompt()">💾 حفظ</button>
-        <button class="btn-sm" onclick="resetForm()">🔄 جديد</button>
+        <button class="btn btn-secondary" onclick="copyPrompt()">📋 نسخ</button>
+        <button class="btn btn-secondary" onclick="sharePrompt()">🔗 مشاركة</button>
+        <button class="btn btn-secondary" onclick="exportTXT()">📄 TXT</button>
+        <button class="btn btn-secondary" onclick="exportPDF()">📕 PDF</button>
+        <button class="btn btn-secondary" onclick="savePrompt()">💾 حفظ</button>
+        <button class="btn btn-secondary" onclick="resetForm()">🔄 جديد</button>
       </div>
 
-      <div id="tipsBox" style="display:none;" class="tips-box">
-        <div class="tips-title">💡 نصائح لتحسين البرومبت</div>
-        <div class="tips-list" id="tipsContent"></div>
+      <!-- Smart Tips -->
+      <div id="smartTips" style="display:none; margin-top:14px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent); margin-bottom:8px;">💡 نصائح لتحسين البرومبت</div>
+        <div id="tipsContent" style="font-size:12px; color:var(--text-dim); line-height:1.8;"></div>
+      </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="card animate-in delay-3" style="grid-column: 1 / -1;">
+      <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; padding:8px 0;">
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:900; color:var(--accent);" id="statGenerated">0</div>
+          <div style="font-size:12px; color:var(--text-muted);">برومبت تم توليده</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:900; color:var(--accent);" id="statCopied">0</div>
+          <div style="font-size:12px; color:var(--text-muted);">تم نسخه</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:900; color:var(--accent);" id="statSaved">0</div>
+          <div style="font-size:12px; color:var(--text-muted);">تم حفظه</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:900; color:var(--accent);" id="statShared">0</div>
+          <div style="font-size:12px; color:var(--text-muted);">تم مشاركته</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Saved Prompts -->
+    <div class="card animate-in delay-4" style="grid-column: 1 / -1;">
+      <div class="card-title">
+        <div class="icon">📁</div>
+        البرومبتات المحفوظة
+        <span class="counter" id="savedCount">0</span>
+      </div>
+      <div class="saved-list" id="savedList">
+        <div style="text-align:center; color:var(--text-muted); padding:30px; font-size:14px;">
+          لا توجد برومبتات محفوظة بعد
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SAVED -->
-  <div class="card saved-card fade-in delay-4">
-    <div class="card-header">
-      <div class="card-icon">📁</div>
-      <span class="card-title-text">البرومبتات المحفوظة <span class="badge" id="savedCount">0</span></span>
+  <div class="watermark">
+    <div class="footer-profile">
+      <div class="footer-info">
+        <div class="bio" style="font-size:13px; color:var(--text-dim);">صانع محتوى تقني · Ksa8Turky · tech_live0</div>
+      </div>
+      <img src="data:image/webp;base64,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" alt="Turki AlSultan" class="avatar avatar-sm">
     </div>
-    <div class="saved-list" id="savedList">
-      <div style="text-align:center; color:var(--text-3); padding:30px; font-size:13px;">لا توجد برومبتات محفوظة بعد</div>
-    </div>
+    صُمم بواسطة <span>Turki AlSultan</span> | جميع الحقوق محفوظة © 2025
   </div>
+</div>
 
-</div><!-- /app -->
-
-<div class="toast" id="toast">✓ تم</div>
+<!-- Toast -->
+<div class="copy-toast" id="toast">✓ تم النسخ بنجاح</div>
 
 <script>
-// ========== STATE ==========
+// State
 let currentPrompts = {};
 let currentPlatform = 'midjourney';
 let savedPrompts = [];
-let promptLang = 'en';
-let currentMode = 'photo';
-let stats = { generated: 0, copied: 0, saved: 0, shared: 0 };
 
-// ========== CHIPS ==========
-document.querySelectorAll('.chips').forEach(c => {
-  c.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => chip.classList.toggle('active'));
+// Chip selection
+document.querySelectorAll('.chips-container').forEach(container => {
+  container.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      // Allow multiple selections
+      chip.classList.toggle('active');
+    });
   });
 });
 
-function getChips(id) {
-  return Array.from(document.querySelectorAll(`#${id} .chip.active`)).map(c => c.dataset.value);
+function getSelectedChips(containerId) {
+  const chips = document.querySelectorAll(`#${containerId} .chip.active`);
+  return Array.from(chips).map(c => c.dataset.value);
 }
 
-function v(id) { return document.getElementById(id)?.value?.trim() || ''; }
+function val(id) {
+  return document.getElementById(id).value.trim();
+}
 
-// ========== PHOTO PROMPT ==========
 function generatePrompt() {
-  const subject = v('subject');
-  if (!subject) { highlight('subject'); return; }
+  const subject = val('subject');
+  if (!subject) {
+    document.getElementById('subject').focus();
+    document.getElementById('subject').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('subject').style.borderColor = '', 2000);
+    return;
+  }
 
-  const photoType = v('photoType');
-  const angle = v('angle');
-  const cam = v('cameraBody');
-  const lighting = v('lighting');
-  const lens = v('lens');
-  const styles = getChips('styleChips');
-  const colors = getChips('colorChips');
-  const ratio = v('ratio');
-  const quality = v('quality');
-  const extras = v('extras');
-  const neg = v('negative') || 'blurry, low quality, watermark, text, deformed, ugly, bad anatomy, worst quality';
+  const photoType = val('photoType');
+  const angle = val('angle');
+  const cameraBody = val('cameraBody');
+  const lighting = val('lighting');
+  const lens = val('lens');
+  const styles = getSelectedChips('styleChips');
+  const colors = getSelectedChips('colorChips');
+  const ratio = val('ratio');
+  const quality = val('quality');
+  const extras = val('extras');
+  const negative = val('negative') || 'blurry, low quality, watermark, text, deformed, ugly, disfigured';
 
-  const camStr = cam ? `, shot on ${cam}` : '';
   const styleStr = styles.join(', ');
   const colorStr = colors.join(', ');
-  const extStr = extras ? `, ${extras}` : '';
 
-  const base = `${subject}, ${photoType} photography, ${angle}${camStr}, ${lens} lens, ${lighting}, ${styleStr}, ${colorStr}, ${quality}${extStr}`;
+  const cameraStr = cameraBody ? (promptLang === 'ar' ? `، بكاميرا ${cameraBody}` : `, shot on ${cameraBody}`) : '';
+  
+  // Base description
+  const baseDesc = promptLang === 'ar' 
+    ? `${subject}، تصوير ${photoType}، من زاوية ${angle}، إضاءة ${lighting}${cameraStr}، بعدسة ${lens}`
+    : `${subject}, ${photoType} photography, shot from ${angle}, ${lighting}${cameraStr}, shot on ${lens}`;
+  const styleSection = styleStr ? (promptLang === 'ar' ? `، بأسلوب ${styleStr}` : `, ${styleStr} style`) : '';
+  const colorSection = colorStr ? (promptLang === 'ar' ? `، ألوان ${colorStr}` : `, ${colorStr} color palette`) : '';
+  const qualitySection = promptLang === 'ar' ? `، ${quality}` : `, ${quality}`;
+  const extrasSection = extras ? `, ${extras}` : '';
 
-  currentPrompts = {
-    // Midjourney V8.1 — released April 30 2026, fastest model, 2K HD, raw mode
-    midjourney: `${base} --ar ${ratio} --v 8.1 --style raw --s 250 --q 2 --hd\n\n--no ${neg}`,
+  // Midjourney V7
+  currentPrompts.midjourney = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection} --ar ${ratio} --v 7 --s 200 --q 2
 
-    // GPT Image 2 — OpenAI May 2026, replaces 1.5, native 4096×4096, faster, better instruction following
-    gptimage: `A ${quality} ${photoType} photograph: ${subject}. Shot from ${angle}${camStr} using ${lens} lens. Lighting: ${lighting}. Style: ${styleStr}. Colors: ${colorStr}.${extStr}\n\nAvoid: ${neg}\n\n[Model: gpt-image-2]\n[Quality: high]\n[Size: 4096x4096]\n[Format: png]\n[Platform: OpenAI API / ChatGPT Plus]`,
+${negative ? `--no ${negative}` : ''}`.trim();
 
-    // Imagen 4 Ultra — Google, best text rendering + photorealism, via Gemini API
-    nanobanana: `${base}\n\n[Model: Imagen 4 Ultra]\n[Platform: Google AI Studio / Gemini API]\nAspect: ${ratio}\nQuality: Ultra\nOutput: PNG\nnegativePrompt: ${neg}`,
+  // GPT Image (gpt-image-1.5)
+  currentPrompts.gptimage = `Create a ${quality} ${photoType} photograph: ${subject}. The scene is captured from a ${angle} perspective with ${lighting}. Shot using a ${lens} lens. The visual style is ${styleStr || 'cinematic'} with a ${colorStr || 'natural'} color palette. Aspect ratio: ${ratio}.${extras ? ' Additional details: ' + extras : ''}${negative ? ' Avoid: ' + negative : ''}
 
-    // FLUX.2 Dev — Black Forest Labs Nov 2025, production-grade photorealism
-    flux: `${base}\n\n[Model: FLUX.2 Dev]\n[Platform: Black Forest Labs API / Replicate]\naspect_ratio: ${ratio}\nguidance: 3.5\nnum_inference_steps: 28\noutput_quality: 100\nraw: true\nnegative_prompt: ${neg}`,
+[Model: gpt-image-1.5]
+[Quality: high]
+[Size: 1024x1024]`;
 
-    // Ideogram 3.0 — 90-95% text accuracy, Style References, 4.3B style presets
-    ideogram: `${base}, photographic, professional quality\n\n[Model: Ideogram 3.0]\nStyle: REALISTIC\nAspect Ratio: ${ratio.replace(':','_')}\nMagic Prompt: ON\nStyle References: up to 3 images\nNegative: ${neg}`,
+  // Nano Banana Pro Studio
+  currentPrompts.nanobanana = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
 
-    // Adobe Firefly Image 3 — commercially safe, IP indemnification, licensed training data
-    adobe: `${base}\n\n[Model: Adobe Firefly Image 3]\nContent type: Photo\nAspect ratio: ${ratio}\nStyle strength: 60\nPhoto settings: true\nCommercial safe: true (licensed training data)\nNegative: ${neg}`,
+[Nano Banana Pro Settings]
+Style: Photography
+Aspect Ratio: ${ratio}
+Quality: Ultra
+Enhancement: Pro
+Negative: ${negative}`.trim();
 
-    // Leonardo Phoenix — Alchemy V2, custom model fine-tuning, style consistency
-    leonardo: `${base}\n\nNegative prompt: ${neg}\nAspect Ratio: ${ratio}\nGuidance Scale: 7\nSteps: 40\nPreset: PHOTOGRAPHY\nAlchemy: true\n\n[Model: Leonardo Phoenix]\n[Feature: Alchemy V2]`,
+  // Leonardo AI
+  currentPrompts.leonardo = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
 
-    // Grok Aurora 2 — xAI, permissive content policy, strong photorealism
-    grok: `Generate ${quality} ${photoType}: ${subject}. Angle: ${angle}${camStr}. Lens: ${lens}. Lighting: ${lighting}. Style: ${styleStr}. Colors: ${colorStr}. Ratio: ${ratio}.${extStr} Avoid: ${neg}\n\n[Model: Grok Aurora 2]\n[Platform: x.ai / Grok app]`,
+Negative prompt: ${negative}
+Aspect Ratio: ${ratio}
+Guidance Scale: 7
+Steps: 30`.trim();
 
-    // Stable Diffusion 3.5 Large — open-source, local, maximum control
-    sd: `${base}\n\n[Model: Stable Diffusion 3.5 Large]\n[Platform: Local / Stability AI API]\nwidth: ${ratio === '16:9' ? 1344 : ratio === '9:16' ? 768 : 1024}\nheight: ${ratio === '16:9' ? 768 : ratio === '9:16' ? 1344 : 1024}\ncfg_scale: 7\nsteps: 40\nsampler: DPM++ 3M SDE\nnegative_prompt: ${neg}`,
+  // Ideogram
+  currentPrompts.ideogram = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
 
-    // Nano Banana Pro — photorealism + character generation, reusable Soul Characters, commercial use
-    nbpro: `${base}\n\n[Model: Nano Banana Pro]\n[Platform: higgsfield.ai]\nAspect Ratio: ${ratio}\nQuality: Ultra\nStyle: Photography\nSoul Character: supported (reusable identity)\nCommercial: true\nNegative: ${neg}`,
+Aspect Ratio: ${ratio}
+Style: Photo
+Negative: ${negative}`.trim();
 
-    // Nano Banana 2 — top quality 4K, text rendering, diagrams, cinematic detail
-    nb2: `${base}\n\n[Model: Nano Banana 2]\n[Platform: higgsfield.ai]\nAspect Ratio: ${ratio}\nQuality: 4K Ultra\nText rendering: best-in-class\nDiagrams: supported\nStyle: ${styleStr || 'cinematic'}\nNegative: ${neg}`
-  };
+  // Grok
+  currentPrompts.grok = `Generate a ${quality} ${photoType} photo: ${subject}. Camera angle: ${angle}. Lighting: ${lighting}. Lens: ${lens}. Style: ${styleStr || 'cinematic'}. Colors: ${colorStr || 'natural'}. Ratio: ${ratio}.${extras ? ' Extra: ' + extras : ''} Avoid: ${negative}`;
 
-  showOutput();
-}
+  // Flux
+  currentPrompts.flux = `${baseDesc}${styleSection}${colorSection}${qualitySection}${extrasSection}
 
-// ========== VIDEO PROMPT ==========
-function generateVideoPrompt() {
-  const subject = v('videoSubject');
-  if (!subject) { highlight('videoSubject'); return; }
-  const motion = v('cameraMotion');
-  const duration = v('videoDuration');
-  const style = v('videoStyle');
-  const target = v('videoTarget');
-  const extras = v('videoExtras');
-  const extStr = extras ? `, ${extras}` : '';
+[Parameters]
+aspect_ratio: ${ratio}
+guidance: 3.5
+steps: 28
+negative_prompt: ${negative}`.trim();
 
-  const base = `${subject}. Camera: ${motion}. Style: ${style}. Duration: ${duration}. Photorealistic, ultra high quality, cinematic, smooth motion${extStr}`;
-
-  currentPrompts = {
-    // Veo 3.1 — Google DeepMind, best overall, native 4K + synchronized audio, April 2026
-    midjourney: `${base}\n\n[Model: Google Veo 3.1]\n[Platform: Google Flow / Gemini API / Vertex AI]\nResolution: 4K\nDuration: ${duration}\nAspect: 16:9\nNative audio: true\nCamera control: ${motion}\nAccess: Gemini Advanced ($20/mo) or API ($0.75/sec)`,
-
-    // Kling 3.0 — KuaiShou, Feb 2026, Multi-Shot Storyboard, native 4K, multi-character audio
-    gptimage: `${base}\n\n[Model: Kling 3.0]\n[Platform: klingai.com / FAL.AI]\nResolution: 4K native\nDuration: ${duration}\nMode: Pro Master\nMulti-Shot: true\nNative audio: true\nCharacter consistency: true\nCost: ~$0.10/sec`,
-
-    // Runway Gen-4.5 — best for professional control, camera moves, reference-driven
-    nanobanana: `${base}\n\n[Model: Runway Gen-4.5]\n[Platform: runwayml.com]\nResolution: 1080p (upscale 4K)\nDuration: ${duration}\nMotion Brush: advanced\nCamera control: ${motion}\nScene ingredients: true\nReference image: supported\nFrom: $12/mo`,
-
-    // Seedance 2.0 — ByteDance, Feb 2026, unified audio-video generation, 12-file multimodal input
-    flux: `${base}\n\n[Model: Seedance 2.0 — ByteDance]\n[Platform: FAL.AI / Seedance app]\nResolution: 1080p\nDuration: ${duration}\nAudio-video: unified joint generation\nMultimodal input: up to 12 files\nLip-sync: 8+ languages\nPhoneme-level sync: true\nCost: ~$0.14/sec`,
-
-    // Pika 2.5 — Pikaswaps + Pikaffects, fast 42s renders, social-first
-    ideogram: `${base}\n\n[Model: Pika 2.5]\n[Platform: pika.art]\nDuration: ${duration}\nMotion: ${motion}\nPikaswaps: object replacement\nPikaffects: visual FX\nPikaframes: keyframe interpolation\nRender time: ~42 seconds\nFrom: $8/mo`,
-
-    // Luma Ray3 (Dream Machine) — 4K HDR, superior physics simulation
-    leonardo: `${base}\n\n[Model: Luma Ray3 / Dream Machine]\n[Platform: lumalabs.ai]\nResolution: 4K HDR\nDuration: ${duration}\nPhysics simulation: advanced\nImage-to-video: true\nAtmospheric motion: cinematic\nFrom: $7.99/mo`,
-
-    // Hailuo MiniMax 2.3 — fast, creative motion, social content
-    grok: `${base}\n\n[Model: Hailuo MiniMax 2.3]\n[Platform: hailuoai.com]\nResolution: 1080p\nDuration: ${duration}\nMotion: ${motion}\nStyle: ${style}\nFast generation: true`,
-
-    // Wan 2.6 — Alibaba, open-source, versatile ecosystem, free self-host
-    adobe: `${base}\n\n[Model: Wan 2.6 — Alibaba]\n[Platform: FAL.AI / self-host]\nResolution: 1080p\nDuration: ${duration}\nOpen source: true\nEcosystem: complete\nCommercial: yes (paid plans)\nSelf-host: supported`,
-
-    // LTX-2 — open-source, licensed training data, 1080p-4K local, Jan 2026
-    sd: `${base}\n\n[Model: LTX-2]\n[Platform: local / Stability AI]\nResolution: 1080p to 4K\nDuration: ${duration}\nOpen source: true\nTraining data: licensed\nCommercial safe: true\nLocal deployment: supported`,
-
-    // Nano Banana Pro — video generation via higgsfield, Soul Characters, cinematic
-    nbpro: `${base}\n\n[Model: Nano Banana Pro — higgsfield.ai]\nDuration: ${duration}\nSoul Character: reusable identity\nCinematic: true\nMotion: ${motion}`,
-
-    // Nano Banana 2 — 4K ultra, precise motion, high detail
-    nb2: `${base}\n\n[Model: Nano Banana 2 — higgsfield.ai]\nDuration: ${duration}\nResolution: 4K Ultra\nMotion control: precise\nCamera: ${motion}\nStyle: ${style}`
-  };
-
-  // Update tab labels to video model names
-  const labels = {
-    midjourney: 'Veo 3.1 ★', gptimage: 'Kling 3.0', nanobanana: 'Runway Gen-4.5',
-    nbpro: 'NB Pro Video', nb2: 'NB2 Video',
-    flux: 'Seedance 2.0', ideogram: 'Pika 2.5', leonardo: 'Luma Ray3',
-    grok: 'Hailuo 2.3', adobe: 'Wan 2.6', sd: 'LTX-2'
-  };
-  document.querySelectorAll('#outputTabs .ptab').forEach(t => {
-    if (labels[t.dataset.platform]) t.textContent = labels[t.dataset.platform];
-  });
-
-  showOutput();
-}
-
-// ========== CALLIGRAPHY PROMPT ==========
-function generateCalliPrompt() {
-  const text = v('calliText');
-  if (!text) { highlight('calliText'); return; }
-  const style = v('calliStyle');
-  const material = v('calliMaterial');
-  const bg = v('calliBg');
-  const extras = v('calliExtras');
-  const extStr = extras ? `, ${extras}` : '';
-
-  const base = `Arabic calligraphy artwork, text: "${text}", written in ${style} script, ${material}, background: ${bg}, masterful traditional calligraphy, intricate ornate details, ultra-detailed, 8K resolution${extStr}`;
-  const neg = 'blurry, low quality, wrong text, misspelled, latin letters, roman script, incorrect calligraphy';
-
-  // Reset tab labels
-  const photoLabels = {
-    midjourney:'Midjourney V8.1', gptimage:'GPT Image 2', nanobanana:'Imagen 4 Ultra',
-    nbpro:'Nano Banana Pro', nb2:'Nano Banana 2',
-    flux:'FLUX.2 Dev', ideogram:'Ideogram 3.0', adobe:'Firefly Image 3',
-    leonardo:'Leonardo Phoenix', grok:'Grok Aurora 2', sd:'SD 3.5 Large'
-  };
-  document.querySelectorAll('#outputTabs .ptab').forEach(t => {
-    if (photoLabels[t.dataset.platform]) t.textContent = photoLabels[t.dataset.platform];
-  });
-
-  currentPrompts = {
-    midjourney: `${base} --ar 16:9 --v 8.1 --s 400 --q 2 --hd\n\n--no ${neg}`,
-    gptimage: `${base}\n\nAvoid: ${neg}\n\n[Model: gpt-image-2]\n[Quality: high]\n[Size: 4096x4096]\n[Platform: OpenAI API / ChatGPT Plus]`,
-    nanobanana: `${base}\n\n[Model: Imagen 4 Ultra]\n[Platform: Google AI Studio]\nAspect: 16:9\nnegativePrompt: ${neg}`,
-    nbpro: `${base}\n\n[Model: Nano Banana Pro]\n[Platform: higgsfield.ai]\nAspect Ratio: 16:9\nQuality: Ultra\nSoul Character: supported\nCommercial: true\nNegative: ${neg}`,
-    nb2: `${base}\n\n[Model: Nano Banana 2]\n[Platform: higgsfield.ai]\nAspect Ratio: 16:9\nQuality: 4K Ultra\nText rendering: best-in-class\nNegative: ${neg}`,
-    flux: `${base}\n\n[Model: FLUX.2 Dev]\naspect_ratio: 16:9\nguidance: 4.0\nsteps: 32\nnegative_prompt: ${neg}`,
-    ideogram: `${base}, calligraphy art\n\n[Model: Ideogram 3.0]\nStyle: DESIGN\nAspect Ratio: 16_9\nMagic Prompt: ON\nNegative: ${neg}`,
-    adobe: `${base}\n\n[Model: Adobe Firefly Image 3]\nContent type: Art\nAspect: 16:9\nStyle strength: 80\nCommercial safe: true`,
-    leonardo: `${base}\n\nNegative: ${neg}\nAspect: 16:9\nSteps: 40\nPreset: ILLUSTRATION\n\n[Model: Leonardo Phoenix]`,
-    grok: `Create: ${base}. Avoid: ${neg}\n\n[Model: Grok Aurora 2]`,
-    sd: `${base}\n\n[Model: Stable Diffusion 3.5 Large]\ncfg_scale: 8\nsteps: 45\nwidth: 1344\nheight: 768\nnegative_prompt: ${neg}`
-  };
-
-  showOutput();
-}
-
-// ========== OUTPUT ==========
-function showOutput() {
-  currentPlatform = 'midjourney';
-  document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.platform === 'midjourney'));
-  displayPrompt('midjourney');
+  // Display
+  displayPrompt(currentPlatform);
   document.getElementById('outputActions').style.display = 'flex';
-  playSound('generate');
-  showTips();
-  trackStat('generated');
 }
 
 function displayPrompt(platform) {
   const box = document.getElementById('outputBox');
-  const text = currentPrompts[platform];
-  if (text) {
-    box.textContent = text;
-    document.getElementById('charCount').textContent = `${text.length} chars · ${text.split(/\s+/).length} words`;
-  } else {
-    box.innerHTML = '<div class="output-placeholder"><div class="placeholder-icon">✦</div><div>اختر منصة مختلفة</div></div>';
-    document.getElementById('charCount').textContent = '';
+  if (currentPrompts[platform]) {
+    box.innerHTML = '';
+    box.textContent = currentPrompts[platform];
   }
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   currentPlatform = tab.dataset.platform;
-  displayPrompt(currentPlatform);
+  if (currentPrompts[currentPlatform]) {
+    displayPrompt(currentPlatform);
+  }
 }
 
-// ========== ACTIONS ==========
 function copyPrompt() {
   const text = currentPrompts[currentPlatform];
   if (!text) return;
-  navigator.clipboard.writeText(text).then(() => toast('📋 تم النسخ!')).catch(() => {
-    const t = document.createElement('textarea');
-    t.value = text; document.body.appendChild(t); t.select();
-    document.execCommand('copy'); document.body.removeChild(t);
-    toast('📋 تم النسخ!');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✓ تم النسخ بنجاح');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓ تم النسخ بنجاح');
   });
-  trackStat('copied'); playSound('success');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
 function savePrompt() {
-  const key = v('subject') || v('videoSubject') || v('calliText');
-  if (!key || !Object.keys(currentPrompts).length) return;
-  const item = { id: Date.now(), title: key.substring(0, 60), platform: currentPlatform, prompts: {...currentPrompts}, date: new Date().toLocaleDateString('ar-SA'), mode: currentMode };
+  const subject = val('subject');
+  if (!subject || !currentPrompts.midjourney) return;
+
+  const item = {
+    id: Date.now(),
+    title: subject.substring(0, 60),
+    platform: currentPlatform,
+    prompts: { ...currentPrompts },
+    date: new Date().toLocaleDateString('ar-SA')
+  };
+
   savedPrompts.unshift(item);
-  renderSaved(); saveHistory(); toast('💾 تم الحفظ!'); trackStat('saved');
+  renderSaved();
+  showToast('💾 تم الحفظ');
 }
 
 function loadSaved(id) {
   const item = savedPrompts.find(s => s.id === id);
   if (!item) return;
-  currentPrompts = {...item.prompts}; currentPlatform = item.platform;
-  document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.platform === currentPlatform));
+  currentPrompts = { ...item.prompts };
+  currentPlatform = item.platform;
+
+  // Switch tab
+  document.querySelectorAll('.output-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.platform === currentPlatform);
+  });
+
   displayPrompt(currentPlatform);
   document.getElementById('outputActions').style.display = 'flex';
-  toast('✓ تم التحميل');
+  showToast('✓ تم التحميل');
 }
 
-function deleteSaved(id) { savedPrompts = savedPrompts.filter(s => s.id !== id); renderSaved(); saveHistory(); }
+function deleteSaved(id) {
+  savedPrompts = savedPrompts.filter(s => s.id !== id);
+  renderSaved();
+}
 
 function renderSaved() {
   const list = document.getElementById('savedList');
-  document.getElementById('savedCount').textContent = savedPrompts.length;
-  if (!savedPrompts.length) { list.innerHTML = '<div style="text-align:center;color:var(--text-3);padding:30px;font-size:13px;">لا توجد برومبتات محفوظة بعد</div>'; return; }
+  const count = document.getElementById('savedCount');
+  count.textContent = savedPrompts.length;
+
+  if (savedPrompts.length === 0) {
+    list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:30px; font-size:14px;">لا توجد برومبتات محفوظة بعد</div>';
+    return;
+  }
+
   list.innerHTML = savedPrompts.map(item => `
     <div class="saved-item">
       <div class="saved-item-info" onclick="loadSaved(${item.id})">
         <div class="saved-item-title">${item.title}</div>
-        <div class="saved-item-meta">${item.date} · ${item.platform} · ${item.mode||'photo'}</div>
+        <div class="saved-item-meta">${item.date} · ${item.platform}</div>
       </div>
-      <div class="saved-item-acts">
-        <button class="btn-sm" onclick="loadSaved(${item.id})">📂</button>
-        <button class="btn-sm" onclick="deleteSaved(${item.id})">🗑️</button>
+      <div class="saved-item-actions">
+        <button class="btn-icon" onclick="loadSaved(${item.id})" title="تحميل">📂</button>
+        <button class="btn-icon" onclick="deleteSaved(${item.id})" title="حذف">🗑️</button>
       </div>
-    </div>`).join('');
+    </div>
+  `).join('');
 }
 
 function resetForm() {
-  ['subject','extras','negative','videoSubject','videoExtras','calliText','calliExtras'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  document.getElementById('outputBox').innerHTML = '<div class="output-placeholder"><div class="placeholder-icon">✦</div><div>قم بتعبئة الحقول ثم اضغط توليد البرومبت</div></div>';
+  document.getElementById('subject').value = '';
+  document.getElementById('extras').value = '';
+  document.getElementById('negative').value = '';
+  document.getElementById('outputBox').innerHTML = '<div class="placeholder">✦ قم بتعبئة الحقول ثم اضغط "توليد البرومبت" للحصول على برومبت احترافي</div>';
   document.getElementById('outputActions').style.display = 'none';
-  document.getElementById('tipsBox').style.display = 'none';
-  document.getElementById('charCount').textContent = '';
   currentPrompts = {};
 }
+// ===== 1. THEME TOGGLE =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  if (html.getAttribute('data-theme') === 'light') {
+    html.removeAttribute('data-theme');
+    btn.textContent = '🌙';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    html.setAttribute('data-theme', 'light');
+    btn.textContent = '☀️';
+    localStorage.setItem('theme', 'light');
+  }
+  playSound('click');
+}
+// Load saved theme
+if (localStorage.getItem('theme') === 'light') {
+  document.documentElement.setAttribute('data-theme', 'light');
+  document.getElementById('themeBtn').textContent = '☀️';
+}
 
+// ===== 2. LANGUAGE TOGGLE (AR/EN prompts) =====
+let promptLang = 'en';
+function toggleLang() {
+  const btn = document.getElementById('langBtn');
+  if (promptLang === 'en') {
+    promptLang = 'ar';
+    btn.innerHTML = '🌐 AR';
+  } else {
+    promptLang = 'en';
+    btn.innerHTML = '🌐 EN';
+  }
+  playSound('click');
+  if (Object.keys(currentPrompts).length > 0) generatePrompt();
+}
+
+// ===== 3. AUTO-SAVE HISTORY (localStorage) =====
+function loadHistory() {
+  try {
+    const saved = localStorage.getItem('promptHistory');
+    if (saved) {
+      savedPrompts = JSON.parse(saved);
+      renderSaved();
+    }
+  } catch(e) {}
+}
+function saveHistory() {
+  try {
+    localStorage.setItem('promptHistory', JSON.stringify(savedPrompts.slice(0, 50)));
+  } catch(e) {}
+}
+loadHistory();
+
+// Override save/delete to persist
+const _origSave = savePrompt;
+savePrompt = function() {
+  _origSave();
+  saveHistory();
+};
+const _origDelete = deleteSaved;
+deleteSaved = function(id) {
+  _origDelete(id);
+  saveHistory();
+};
+
+// ===== 4. SHARE PROMPT VIA LINK =====
 function sharePrompt() {
   const text = currentPrompts[currentPlatform];
   if (!text) return;
   const params = new URLSearchParams({ p: currentPlatform, t: text });
   const url = window.location.origin + window.location.pathname + '?' + params.toString();
+  
   if (navigator.share) {
-    navigator.share({ title: 'Prompt.in short', text, url });
+    navigator.share({ title: 'Prompt Studio', text: text, url: url });
   } else {
-    navigator.clipboard.writeText(url).then(() => toast('🔗 تم نسخ رابط المشاركة'));
+    navigator.clipboard.writeText(url).then(() => showToast('🔗 تم نسخ رابط المشاركة'));
   }
-  trackStat('shared'); playSound('success');
+  playSound('success');
 }
 
+// Load shared prompt from URL
+function loadSharedPrompt() {
+  const params = new URLSearchParams(window.location.search);
+  const text = params.get('t');
+  const platform = params.get('p');
+  if (text && platform) {
+    currentPrompts[platform] = text;
+    currentPlatform = platform;
+    document.querySelectorAll('.output-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.platform === platform);
+    });
+    document.getElementById('outputBox').textContent = text;
+    document.getElementById('outputActions').style.display = 'flex';
+    updateCharCount(text);
+  }
+}
+loadSharedPrompt();
+
+// ===== 5. EXPORT TXT & PDF =====
 function exportTXT() {
-  let c = '=== Prompt.in short ===\n\n';
-  for (const [p, t] of Object.entries(currentPrompts)) if (t) c += `--- ${p.toUpperCase()} ---\n${t}\n\n`;
-  const b = new Blob([c], {type:'text/plain;charset=utf-8'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'prompt-' + Date.now() + '.txt'; a.click();
-  toast('📄 تم التصدير TXT'); playSound('success');
+  let content = '=== Prompt Studio ===\n\n';
+  for (const [platform, prompt] of Object.entries(currentPrompts)) {
+    if (prompt) content += `--- ${platform.toUpperCase()} ---\n${prompt}\n\n`;
+  }
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'prompt-studio-' + Date.now() + '.txt';
+  a.click();
+  playSound('success');
+  showToast('📄 تم تصدير TXT');
 }
 
 function exportPDF() {
-  const w = window.open('', '_blank');
-  let html = `<html><head><meta charset="UTF-8"><title>Prompt.in short</title><style>body{font-family:monospace;padding:40px;background:#07070d;color:#f0ece4;}h1{color:#d4a843;text-align:center;font-size:22px;margin-bottom:28px;}.p{color:#d4a843;font-size:14px;font-weight:bold;margin:18px 0 6px;border-bottom:1px solid #1a1a2e;padding-bottom:5px;}.t{background:#0e0e1a;padding:14px;border-radius:8px;white-space:pre-wrap;line-height:1.8;font-size:12px;margin-bottom:14px;}.f{text-align:center;color:#5a5570;font-size:10px;margin-top:28px;}</style></head><body><h1>✦ Prompt.in short</h1>`;
-  for (const [p, t] of Object.entries(currentPrompts)) if (t) html += `<div class="p">${p.toUpperCase()}</div><div class="t">${t.replace(/</g,'&lt;')}</div>`;
-  html += '<div class="f">Prompt.in short · by Ksa8Turky</div></body></html>';
-  w.document.write(html); w.document.close();
-  setTimeout(() => w.print(), 400);
-  toast('📕 جاري التصدير PDF');
+  const win = window.open('', '_blank');
+  let content = '<html><head><meta charset="UTF-8"><title>Prompt Studio Export</title>';
+  content += '<style>body{font-family:monospace;padding:40px;background:#0a0a0f;color:#e8e4dc;}';
+  content += 'h1{color:#c9a84c;text-align:center;font-size:24px;margin-bottom:30px;}';
+  content += '.platform{color:#c9a84c;font-size:16px;font-weight:bold;margin:20px 0 8px;border-bottom:1px solid #2a2a3e;padding-bottom:6px;}';
+  content += '.prompt{background:#1a1a28;padding:16px;border-radius:8px;white-space:pre-wrap;line-height:1.8;margin-bottom:16px;font-size:13px;}';
+  content += '.footer{text-align:center;color:#5a5668;font-size:11px;margin-top:30px;}</style></head><body>';
+  content += '<h1>✦ Prompt Studio</h1>';
+  for (const [platform, prompt] of Object.entries(currentPrompts)) {
+    if (prompt) {
+      content += `<div class="platform">${platform.toUpperCase()}</div>`;
+      content += `<div class="prompt">${prompt.replace(/</g,'&lt;')}</div>`;
+    }
+  }
+  content += '<div class="footer">Generated by Prompt Studio | Ksa8Turky</div>';
+  content += '</body></html>';
+  win.document.write(content);
+  win.document.close();
+  setTimeout(() => { win.print(); }, 500);
+  playSound('success');
+  showToast('📕 جاري تصدير PDF');
 }
 
-// ========== THEME ==========
-function toggleTheme() {
-  const html = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  const light = html.getAttribute('data-theme') === 'light';
-  if (light) { html.removeAttribute('data-theme'); btn.textContent = '🌙'; localStorage.setItem('theme','dark'); }
-  else { html.setAttribute('data-theme','light'); btn.textContent = '☀️'; localStorage.setItem('theme','light'); }
-  playSound('click');
-}
-if (localStorage.getItem('theme') === 'light') { document.documentElement.setAttribute('data-theme','light'); document.getElementById('themeBtn').textContent = '☀️'; }
+// ===== 6. SOUNDS & EFFECTS =====
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
 
-// ========== LANG ==========
-function toggleLang() {
-  const btn = document.getElementById('langBtn');
-  promptLang = promptLang === 'en' ? 'ar' : 'en';
-  btn.innerHTML = promptLang === 'ar' ? '🌐 AR' : '🌐 EN';
-  playSound('click');
+function playSound(type) {
+  try {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.value = 0.08;
+
+    if (type === 'generate') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+    } else if (type === 'success') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(1100, audioCtx.currentTime + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    } else {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    }
+  } catch(e) {}
 }
 
-// ========== MODE ==========
+// ===== CHAR COUNTER =====
+function updateCharCount(text) {
+  const el = document.getElementById('charCount');
+  if (text) {
+    el.textContent = `${text.length} characters`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+// ===== OVERRIDE FUNCTIONS FOR SOUNDS & ARABIC =====
+const _origGenerate = generatePrompt;
+generatePrompt = function() {
+  _origGenerate();
+  playSound('generate');
+  const text = currentPrompts[currentPlatform];
+  if (text) updateCharCount(text);
+};
+
+const _origCopy = copyPrompt;
+copyPrompt = function() {
+  _origCopy();
+  playSound('success');
+};
+
+const _origSwitch = switchTab;
+switchTab = function(tab) {
+  _origSwitch(tab);
+  const text = currentPrompts[currentPlatform];
+  if (text) updateCharCount(text);
+};
+
+// Override displayPrompt to also show char count
+const _origDisplay = displayPrompt;
+displayPrompt = function(platform) {
+  _origDisplay(platform);
+  const text = currentPrompts[platform];
+  if (text) updateCharCount(text);
+};
+// ===== SMART TIPS =====
+const tipsByType = {
+  portrait: ['أضف "shallow depth of field" أو "bokeh" لخلفية ضبابية احترافية', 'استخدم عدسة 85mm أو 135mm للبورتريه الأفضل', 'جرّب "Rembrandt lighting" لإضاءة درامية على الوجه'],
+  landscape: ['أضف "golden hour" أو "blue hour" للألوان الطبيعية الخلابة', 'استخدم عدسة واسعة 14mm-24mm لمشهد أوسع', 'جرّب "long exposure" لتأثير حركة الماء والسحب'],
+  street: ['أضف "candid" أو "documentary style" لإحساس طبيعي', 'جرّب "rain reflections" أو "neon lights" للمشاهد الليلية', 'استخدم "35mm lens" للزاوية الكلاسيكية في تصوير الشوارع'],
+  product: ['أضف "clean white background" أو "gradient backdrop" للمنتجات', 'استخدم "studio lighting with softbox" لإضاءة متساوية', 'جرّب "floating product" أو "levitation" لتأثير إبداعي'],
+  food: ['أضف "overhead flat lay" أو "45-degree angle" لزوايا الطعام', 'استخدم "warm natural light from window" للإضاءة المثالية', 'جرّب "steam rising" أو "sauce dripping" لإحساس حي'],
+  cinematic: ['أضف "anamorphic lens flare" للتأثير السينمائي', 'استخدم "teal and orange color grade" للّون السينمائي', 'جرّب "widescreen 21:9 aspect ratio" للإطار السينمائي'],
+  architecture: ['أضف "symmetrical composition" للتماثل المعماري', 'استخدم "tilt-shift" لتأثير المنمنمات', 'جرّب "blue hour" لإضاءة المباني الليلية المثالية'],
+  fashion: ['أضف "editorial style" أو "high fashion" للأناقة', 'استخدم "wind blown hair" أو "fabric movement" للحركة', 'جرّب "studio backdrop" أو "urban location" للخلفية'],
+  macro: ['أضف "extreme detail" أو "crystal clear" للحدّة', 'استخدم "ring light" أو "diffused natural light" للإضاءة', 'جرّب "water droplets" أو "morning dew" لتفاصيل مذهلة'],
+  aerial: ['أضف "top-down view" أو "diagonal composition" للتكوين', 'استخدم "sunrise/sunset" للظلال الطويلة الجميلة', 'جرّب "patterns and textures" لإبراز التكرارات'],
+  conceptual: ['أضف "surreal elements" أو "double exposure" للإبداع', 'استخدم "symbolic objects" لإيصال رسالة عميقة', 'جرّب "minimalist composition" أو "negative space" للتأثير']
+};
+
+const generalTips = [
+  'كلما كان الوصف أطول وأدق، كانت النتيجة أفضل',
+  'حدد الـ Negative Prompt لتجنب العيوب الشائعة',
+  'جرّب أكثر من منصة لنفس البرومبت وقارن النتائج',
+  'أضف اسم مصور مشهور كمرجع للأسلوب (مثل: in the style of Annie Leibovitz)',
+  'استخدم "8K, ultra-detailed, masterpiece" لأعلى جودة'
+];
+
+function showSmartTips() {
+  let tips = [];
+  
+  if (currentMode === 'photo') {
+    const photoType = val('photoType');
+    tips = tipsByType[photoType] || [];
+  } else if (currentMode === 'video') {
+    tips = [
+      'حدد حركة الكاميرا بدقة - "slow dolly in" أفضل من "camera moves"',
+      'اذكر المدة المطلوبة دائماً لنتائج أدق',
+      'أضف وصف الصوت المحيط لتعزيز الواقعية',
+      'استخدم "seamless loop" لو تبي الفيديو يتكرر بسلاسة'
+    ];
+  } else if (currentMode === 'calligraphy') {
+    tips = [
+      'خط الثلث يعطي أفضل نتائج للعناوين والآيات',
+      'حدد المادة (ذهب، حبر) لنتائج واقعية أكثر',
+      'أضف "ultra detailed strokes" لتفاصيل الحروف',
+      'الخلفيات الداكنة تبرز الخط الذهبي بشكل أقوى'
+    ];
+  } else if (currentMode === 'ads') {
+    tips = [
+      'اذكر اسم المنتج بالضبط + وصف مختصر للحصول على نتائج دقيقة',
+      'حدد منصة النشر لأن كل منصة لها مقاس مختلف',
+      'أضف "space for text overlay" لو تبي تضيف نص بعدين',
+      '"product hero shot" تعطي صورة المنتج بشكل بارز ومسيطر',
+      'استخدم "brand-ready" و "commercial quality" لنتائج احترافية',
+      'لإعلانات الطعام أضف "appetizing, steam, fresh, close-up"',
+      'لإعلانات العطور أضف "luxury, reflections, glass, bokeh"',
+      'Ideogram أفضل منصة لو تبي نص عربي واضح داخل الصورة'
+    ];
+  }
+  
+  const randomGeneral = generalTips[Math.floor(Math.random() * generalTips.length)];
+  const allTips = [...tips.slice(0, 3)];
+  allTips.push(randomGeneral);
+  
+  const tipsEl = document.getElementById('tipsContent');
+  const tipsBox = document.getElementById('smartTips');
+  
+  tipsEl.innerHTML = allTips.map(t => `<div style="margin-bottom:4px;">✦ ${t}</div>`).join('');
+  tipsBox.style.display = 'block';
+}
+
+// ===== STATS TRACKING =====
+let stats = { generated: 0, copied: 0, saved: 0, shared: 0 };
+
+function loadStats() {
+  try {
+    const s = localStorage.getItem('promptStats');
+    if (s) stats = JSON.parse(s);
+    updateStatsUI();
+  } catch(e) {}
+}
+
+function saveStats() {
+  try { localStorage.setItem('promptStats', JSON.stringify(stats)); } catch(e) {}
+}
+
+function updateStatsUI() {
+  document.getElementById('statGenerated').textContent = stats.generated;
+  document.getElementById('statCopied').textContent = stats.copied;
+  document.getElementById('statSaved').textContent = stats.saved;
+  document.getElementById('statShared').textContent = stats.shared;
+}
+
+function trackStat(type) {
+  stats[type]++;
+  saveStats();
+  updateStatsUI();
+}
+
+loadStats();
+
+// ===== MODE SWITCHING =====
+let currentMode = 'photo';
 function switchMode(mode, btn) {
   currentMode = mode;
-  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.mode-section').forEach(s => s.classList.remove('active'));
   document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
-  document.getElementById('outputSection').style.display = mode === 'bgremove' ? 'none' : 'block';
   playSound('click');
 }
 
-// ========== TIPS ==========
-const tipsDB = {
-  portrait: ['أضف "shallow depth of field, bokeh" لخلفية ضبابية', 'عدسة 85mm f/1.2 للبورتريه المثالي', '"Rembrandt lighting" لإضاءة درامية على الوجه'],
-  landscape: ['"golden hour" أو "blue hour" للألوان الطبيعية', 'عدسة 14-24mm لمشهد أوسع', '"long exposure" لتأثير حركة الماء'],
-  street: ['"candid, documentary style" لإحساس طبيعي', '"rain reflections, neon" للمشاهد الليلية', 'عدسة 35mm للزاوية الكلاسيكية'],
-  product: ['"studio lighting, softbox" لإضاءة متساوية', '"floating product, levitation" لتأثير إبداعي', '"clean background" للمنتجات'],
-  cinematic: ['"anamorphic lens flare" للتأثير السينمائي', '"teal and orange" للّون السينمائي الكلاسيكي', '"21:9 aspect ratio" للإطار السينمائي'],
-  default: ['كلما كان الوصف أدق كانت النتيجة أفضل', 'جرّب أكثر من منصة وقارن النتائج', 'الـ Negative Prompt يتجنب العيوب الشائعة']
-};
+// ===== VIDEO PROMPT GENERATOR =====
+function generateVideoPrompt() {
+  const subject = document.getElementById('videoSubject').value.trim();
+  if (!subject) { document.getElementById('videoSubject').focus(); return; }
+  const motion = document.getElementById('cameraMotion').value;
+  const duration = document.getElementById('videoDuration').value;
+  const style = document.getElementById('videoStyle').value;
+  const extras = document.getElementById('videoExtras').value.trim();
+  const extStr = extras ? `, ${extras}` : '';
 
-function showTips() {
-  const type = v('photoType') || 'default';
-  const tips = tipsDB[type] || tipsDB.default;
-  document.getElementById('tipsContent').innerHTML = tips.map(t => `✦ ${t}`).join('<br>');
-  document.getElementById('tipsBox').style.display = 'block';
+  currentPrompts = {};
+
+  // Sora
+  currentPrompts.midjourney = `${subject}. Camera: ${motion}. Style: ${style}. Duration: ${duration}. Cinematic quality, smooth motion, photorealistic${extStr}`;
+
+  // Runway Gen-3
+  currentPrompts.gptimage = `${subject}, ${motion}, ${style} style, ${duration} clip, high quality, smooth transitions${extStr}
+
+[Platform: Runway Gen-3 Alpha]`;
+
+  // Veo
+  currentPrompts.nanobanana = `${subject}. Camera movement: ${motion}. Visual style: ${style}. Duration: ${duration}. Ultra HD, professional cinematography${extStr}
+
+[Platform: Google Veo 2]`;
+
+  // Kling
+  currentPrompts.leonardo = `${subject}, ${motion}, ${style}, ${duration}, high quality video generation${extStr}
+
+[Platform: Kling AI]`;
+
+  currentPrompts.flux = `${subject}, ${motion}, ${style} cinematic, ${duration}${extStr}
+
+[Platform: Sora / OpenAI]`;
+
+  currentPlatform = 'midjourney';
+  
+  // Update tab labels for video
+  const tabs = document.querySelectorAll('#outputTabs .output-tab');
+  const videoLabels = { midjourney: 'Sora', gptimage: 'Runway', nanobanana: 'Veo 2', leonardo: 'Kling', ideogram: 'Pika', grok: 'Grok', flux: 'Sora Alt' };
+  tabs.forEach(t => { if (videoLabels[t.dataset.platform]) t.textContent = videoLabels[t.dataset.platform]; });
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.platform === 'midjourney'));
+
+  displayPrompt('midjourney');
+  document.getElementById('outputActions').style.display = 'flex';
+  playSound('generate');
+  showSmartTips();
+  trackStat('generated');
 }
 
-// ========== STATS ==========
-function trackStat(type) { stats[type]++; saveStats(); updateStatsUI(); }
-function updateStatsUI() {
-  ['generated','copied','saved','shared'].forEach(k => {
-    const el = document.getElementById('stat' + k.charAt(0).toUpperCase() + k.slice(1));
-    if (el) el.textContent = stats[k];
-  });
-}
-function saveStats() { try { localStorage.setItem('promptStats', JSON.stringify(stats)); } catch(e){} }
-function loadStats() { try { const s = localStorage.getItem('promptStats'); if (s) { stats = JSON.parse(s); updateStatsUI(); } } catch(e){} }
-loadStats();
+// ===== CALLIGRAPHY PROMPT GENERATOR =====
+function generateCalliPrompt() {
+  const text = document.getElementById('calliText').value.trim();
+  if (!text) { document.getElementById('calliText').focus(); return; }
+  const style = document.getElementById('calliStyle').value;
+  const material = document.getElementById('calliMaterial').value;
+  const bg = document.getElementById('calliBg').value;
+  const extras = document.getElementById('calliExtras').value.trim();
+  const extStr = extras ? `, ${extras}` : '';
 
-// ========== HISTORY ==========
-function saveHistory() { try { localStorage.setItem('promptHistory', JSON.stringify(savedPrompts.slice(0,50))); } catch(e){} }
-function loadHistory() { try { const s = localStorage.getItem('promptHistory'); if (s) { savedPrompts = JSON.parse(s); renderSaved(); } } catch(e){} }
-loadHistory();
+  const base = `Arabic calligraphy text "${text}" written in ${style} script style, ${material}, background: ${bg}, masterful traditional Islamic calligraphy, ultra-detailed, ornate${extStr}`;
 
-// ========== SHARE URL ==========
-(function(){
-  const p = new URLSearchParams(window.location.search);
-  const text = p.get('t'), platform = p.get('p');
-  if (text && platform) {
-    currentPrompts[platform] = text; currentPlatform = platform;
-    document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('active', t.dataset.platform === platform));
-    document.getElementById('outputBox').textContent = text;
-    document.getElementById('outputActions').style.display = 'flex';
-    document.getElementById('charCount').textContent = text.length + ' chars';
-  }
-})();
+  currentPrompts = {};
+  currentPrompts.midjourney = `${base}, 8K resolution --ar 16:9 --v 7 --s 300 --q 2\n\n--no blurry, low quality, wrong text, latin letters`;
+  currentPrompts.gptimage = `Create a stunning ${style} Arabic calligraphy artwork. The text "${text}" is rendered in ${material}. Background: ${bg}. Style: masterful traditional Islamic calligraphy with ornate details${extStr}. Ultra high quality.\n\n[Model: gpt-image-1.5]\n[Quality: high]`;
+  currentPrompts.nanobanana = `${base}\n\n[Nano Banana Pro Settings]\nStyle: Art\nAspect Ratio: 16:9\nQuality: Ultra\nNegative: blurry, wrong text, latin letters`;
+  currentPrompts.leonardo = `${base}\n\nNegative prompt: blurry, low quality, wrong text, misspelled, latin letters\nAspect Ratio: 16:9\nGuidance Scale: 8\nSteps: 35`;
+  currentPrompts.flux = `${base}\n\n[Parameters]\naspect_ratio: 16:9\nguidance: 4.0\nsteps: 30\nnegative_prompt: blurry, wrong text, latin letters`;
 
-// ========== SOUND ==========
-const ACtx = window.AudioContext || window.webkitAudioContext;
-let actx;
-function playSound(type) {
-  try {
-    if (!actx) actx = new ACtx();
-    const o = actx.createOscillator(), g = actx.createGain();
-    o.connect(g); g.connect(actx.destination); g.gain.value = 0.06;
-    if (type === 'generate') { o.type = 'sine'; o.frequency.setValueAtTime(523,actx.currentTime); o.frequency.setValueAtTime(784,actx.currentTime+0.15); g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.35); o.start(); o.stop(actx.currentTime+0.35); }
-    else if (type === 'success') { o.type = 'sine'; o.frequency.setValueAtTime(880,actx.currentTime); o.frequency.setValueAtTime(1100,actx.currentTime+0.08); g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.2); o.start(); o.stop(actx.currentTime+0.2); }
-    else { o.type = 'sine'; o.frequency.setValueAtTime(600,actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+0.1); o.start(); o.stop(actx.currentTime+0.1); }
-  } catch(e){}
+  currentPlatform = 'midjourney';
+
+  // Reset tab labels to photo names
+  const tabs = document.querySelectorAll('#outputTabs .output-tab');
+  const photoLabels = { midjourney: 'Midjourney V7', gptimage: 'GPT Image', nanobanana: 'Nano Banana Pro', leonardo: 'Leonardo AI', ideogram: 'Ideogram', grok: 'Grok', flux: 'Flux' };
+  tabs.forEach(t => { if (photoLabels[t.dataset.platform]) t.textContent = photoLabels[t.dataset.platform]; });
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.platform === 'midjourney'));
+
+  displayPrompt('midjourney');
+  document.getElementById('outputActions').style.display = 'flex';
+  playSound('generate');
+  trackStat('generated');
 }
 
-// ========== HELPERS ==========
-function highlight(id) { const el = document.getElementById(id); if (!el) return; el.focus(); el.style.borderColor = 'var(--danger)'; setTimeout(() => el.style.borderColor = '', 2000); }
-function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-
-// ========== KEYBOARD ==========
-document.addEventListener('keydown', e => {
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
     if (currentMode === 'photo') generatePrompt();
     else if (currentMode === 'video') generateVideoPrompt();
     else if (currentMode === 'calligraphy') generateCalliPrompt();
+    else if (currentMode === 'ads') generateAdPrompt();
   }
 });
 
-// ========== DRAG & DROP ==========
-const uploadZone = document.getElementById('uploadZone');
-if (uploadZone) {
-  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-  uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); const file = e.dataTransfer.files[0]; if (file) processFile(file); });
+// ===== ADS PROMPT GENERATOR =====
+function generateAdPrompt() {
+  const product = document.getElementById('adProduct').value.trim();
+  if (!product) { document.getElementById('adProduct').focus(); return; }
+  
+  const desc = document.getElementById('adDescription').value.trim();
+  const adType = document.getElementById('adType').value;
+  const adPlatform = document.getElementById('adPlatform').value;
+  const audience = document.getElementById('adAudience').value;
+  const mood = document.getElementById('adMood').value;
+  const colors = document.getElementById('adColors').value;
+  const lighting = document.getElementById('adLighting').value;
+  const adText = document.getElementById('adText').value.trim();
+  const extras = document.getElementById('adExtras').value.trim();
+
+  // Extract aspect ratio from platform
+  const arMatch = adPlatform.match(/\((\d+x\d+)\)/);
+  const dimensions = arMatch ? arMatch[1] : '1080x1080';
+  const w = parseInt(dimensions.split('x')[0]);
+  const h = parseInt(dimensions.split('x')[1]);
+  let ar = '1:1';
+  if (w > h) ar = '16:9';
+  else if (h > w) ar = '9:16';
+
+  const descStr = desc ? `, ${desc}` : '';
+  const textStr = adText ? `, text overlay "${adText}" in modern bold typography` : ', clean design with space for text overlay';
+  const extStr = extras ? `, ${extras}` : '';
+
+  const base = `Professional ${adType} advertisement for ${product}${descStr}. ${adPlatform}. Target audience: ${audience}. Mood: ${mood}. Color palette: ${colors}. Lighting: ${lighting}${textStr}${extStr}. Commercial photography, advertising quality, brand-ready`;
+
+  currentPrompts = {};
+
+  // Midjourney V7
+  currentPrompts.midjourney = `${base}, 8K ultra-detailed --ar ${ar} --v 7 --s 250 --q 2\n\n--no blurry, low quality, watermark, amateur, stock photo look`;
+
+  // GPT Image
+  currentPrompts.gptimage = `Create a professional advertisement image for ${product}${descStr}.\n\nAd Type: ${adType}\nPlatform: ${adPlatform}\nTarget Audience: ${audience}\nMood: ${mood}\nColor Palette: ${colors}\nLighting: ${lighting}${adText ? '\nText Overlay: "' + adText + '"' : ''}\n${extras ? 'Details: ' + extras : ''}\n\nStyle: Commercial photography, advertising quality, brand-ready, polished.\n\n[Model: gpt-image-1.5]\n[Quality: high]\n[Size: ${dimensions}]`;
+
+  // Nano Banana Pro
+  currentPrompts.nanobanana = `${base}, polished commercial quality\n\n[Nano Banana Pro Settings]\nStyle: Commercial Photography\nAspect Ratio: ${ar}\nQuality: Ultra\nEnhancement: Pro\nNegative: blurry, amateur, stock photo, low quality, watermark`;
+
+  // Leonardo
+  currentPrompts.leonardo = `${base}, magazine-quality advertising\n\nNegative prompt: blurry, low quality, amateur, watermark, stock photo, ugly, deformed\nAspect Ratio: ${ar}\nGuidance Scale: 8\nSteps: 35`;
+
+  // Ideogram (good for text in images)
+  currentPrompts.ideogram = `${base}, clean professional advertising layout\n\nAspect Ratio: ${ar}\nStyle: Photo\nRendering: Quality\nNegative: blurry, amateur, low quality`;
+
+  // Flux
+  currentPrompts.flux = `${base}, high-end advertising campaign quality\n\n[Parameters]\naspect_ratio: ${ar}\nguidance: 4.0\nsteps: 30\nnegative_prompt: blurry, amateur, stock photo, low quality, watermark`;
+
+  // Grok
+  currentPrompts.grok = `Generate a professional advertisement for ${product}${descStr}. Ad type: ${adType}. Platform: ${adPlatform}. Audience: ${audience}. Mood: ${mood}. Colors: ${colors}. Lighting: ${lighting}.${adText ? ' Text: "' + adText + '".' : ''} Style: commercial photography, brand-ready. Ratio: ${ar}. Avoid: blurry, amateur, stock photo.`;
+
+  currentPlatform = 'midjourney';
+
+  // Reset tab labels
+  const tabs = document.querySelectorAll('#outputTabs .output-tab');
+  const labels = { midjourney: 'Midjourney V7', gptimage: 'GPT Image', nanobanana: 'Nano Banana Pro', leonardo: 'Leonardo AI', ideogram: 'Ideogram', grok: 'Grok', flux: 'Flux' };
+  tabs.forEach(t => { if (labels[t.dataset.platform]) t.textContent = labels[t.dataset.platform]; });
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.platform === 'midjourney'));
+
+  displayPrompt('midjourney');
+  document.getElementById('outputActions').style.display = 'flex';
+  playSound('generate');
+  showSmartTips();
+  trackStat('generated');
 }
 
-// ========== BG REMOVAL (Pure JS - Offline) ==========
-let originalImageData = null;
-let processedImageData = null;
-let currentBgColor = 'transparent';
-
-function handleFile(e) { processFile(e.target.files[0]); }
-
-function processFile(file) {
-  if (!file || !file.type.startsWith('image/')) { toast('❌ اختر صورة صالحة'); return; }
-  const reader = new FileReader();
-  reader.onload = (e) => loadImageAndProcess(e.target.result);
-  reader.readAsDataURL(file);
-}
-
-function loadImageAndProcess(src) {
-  const img = new Image();
-  img.onload = () => {
-    const statusDiv = document.getElementById('bgRemoveStatus');
-    const statusText = document.getElementById('bgStatusText');
-    statusDiv.style.display = 'block';
-    document.getElementById('bgPreviewArea').style.display = 'none';
-    statusText.textContent = 'جاري تحليل الصورة...';
-
-    setTimeout(() => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const maxSize = 800;
-      let { width: w, height: h } = img;
-      if (w > maxSize || h > maxSize) {
-        const s = Math.min(maxSize/w, maxSize/h);
-        w = Math.round(w*s); h = Math.round(h*s);
-      }
-      canvas.width = w; canvas.height = h;
-      ctx.drawImage(img, 0, 0, w, h);
-      originalImageData = ctx.getImageData(0, 0, w, h);
-
-      statusText.textContent = 'جاري إزالة الخلفية...';
-      setTimeout(() => {
-        processedImageData = removeBackground(originalImageData);
-        statusDiv.style.display = 'none';
-        document.getElementById('bgPreviewArea').style.display = 'block';
-        renderResult('transparent');
-        document.getElementById('bgControls').style.display = 'block';
-      }, 50);
-    }, 100);
-  };
-  img.src = src;
-}
-
-function removeBackground(imageData) {
-  const { data, width, height } = imageData;
-  const result = new ImageData(new Uint8ClampedArray(data), width, height);
-  const rData = result.data;
-
-  // Sample corners for background color
-  const samples = [];
-  const samplePositions = [
-    [0,0],[width-1,0],[0,height-1],[width-1,height-1],
-    [Math.floor(width/2),0],[0,Math.floor(height/2)],
-    [width-1,Math.floor(height/2)],[Math.floor(width/2),height-1]
-  ];
-  samplePositions.forEach(([x,y]) => {
-    const idx = (y*width+x)*4;
-    samples.push([data[idx],data[idx+1],data[idx+2]]);
-  });
-
-  // Average background color
-  const avgBg = [
-    Math.round(samples.reduce((s,c)=>s+c[0],0)/samples.length),
-    Math.round(samples.reduce((s,c)=>s+c[1],0)/samples.length),
-    Math.round(samples.reduce((s,c)=>s+c[2],0)/samples.length)
-  ];
-
-  // Flood fill from corners to find background mask
-  const mask = new Uint8Array(width * height);
-  const visited = new Uint8Array(width * height);
-  const queue = [];
-
-  // Seed points
-  const addSeed = (x, y) => {
-    if (x < 0 || y < 0 || x >= width || y >= height) return;
-    const i = y*width+x;
-    if (!visited[i]) { visited[i] = 1; queue.push(i); }
-  };
-
-  for (let x = 0; x < width; x++) { addSeed(x,0); addSeed(x,height-1); }
-  for (let y = 0; y < height; y++) { addSeed(0,y); addSeed(width-1,y); }
-
-  const tolerance = 60;
-  const colorDist = (r1,g1,b1,r2,g2,b2) => Math.sqrt((r1-r2)**2+(g1-g2)**2+(b1-b2)**2);
-
-  let qi = 0;
-  while (qi < queue.length) {
-    const idx = queue[qi++];
-    const x = idx % width, y = Math.floor(idx / width);
-    const pi = idx * 4;
-    const [r,g,b] = [data[pi],data[pi+1],data[pi+2]];
-    const dist = colorDist(r,g,b,...avgBg);
-    if (dist < tolerance) {
-      mask[idx] = 1;
-      const neighbors = [[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
-      neighbors.forEach(([nx,ny]) => {
-        if (nx>=0&&ny>=0&&nx<width&&ny<height) {
-          const ni = ny*width+nx;
-          if (!visited[ni]) { visited[ni]=1; queue.push(ni); }
-        }
-      });
-    }
+// Hook into existing functions for tracking
+const _gen = generatePrompt;
+generatePrompt = function() {
+  _gen();
+  if (Object.keys(currentPrompts).length > 0) {
+    trackStat('generated');
+    showSmartTips();
   }
+};
 
-  // Feather edges
-  const featherRadius = 2;
-  const feathered = new Float32Array(width * height);
-  for (let y=0;y<height;y++) for (let x=0;x<width;x++) {
-    feathered[y*width+x] = mask[y*width+x];
-  }
-  // Simple box blur on mask
-  const blurred = new Float32Array(width * height);
-  for (let y=0;y<height;y++) for (let x=0;x<width;x++) {
-    let sum=0,cnt=0;
-    for (let dy=-featherRadius;dy<=featherRadius;dy++) for (let dx=-featherRadius;dx<=featherRadius;dx++) {
-      const nx=x+dx,ny=y+dy;
-      if (nx>=0&&ny>=0&&nx<width&&ny<height) { sum+=feathered[ny*width+nx]; cnt++; }
-    }
-    blurred[y*width+x] = sum/cnt;
-  }
+const _copy = copyPrompt;
+copyPrompt = function() {
+  _copy();
+  trackStat('copied');
+};
 
-  // Apply mask
-  for (let i=0;i<width*height;i++) {
-    const alpha = 1 - blurred[i];
-    rData[i*4+3] = Math.round(alpha * 255);
-  }
+const _save = savePrompt;
+savePrompt = function() {
+  _save();
+  trackStat('saved');
+};
 
-  return result;
-}
-
-function renderResult(bgColor) {
-  currentBgColor = bgColor;
-  if (!processedImageData) return;
-
-  const canvas = document.getElementById('resultCanvas');
-  const ctx = canvas.getContext('2d');
-  const { width, height } = processedImageData;
-  canvas.width = width; canvas.height = height;
-
-  // Draw background
-  if (bgColor === 'transparent') {
-    // Checkerboard
-    const size = 20;
-    for (let y=0;y<height;y+=size) for (let x=0;x<width;x+=size) {
-      ctx.fillStyle = ((x/size+y/size)%2===0) ? '#ffffff18' : '#00000018';
-      ctx.fillRect(x,y,size,size);
-    }
-  } else {
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0,0,width,height);
-  }
-
-  // Draw processed image
-  const tmpCanvas = document.createElement('canvas');
-  tmpCanvas.width = width; tmpCanvas.height = height;
-  tmpCanvas.getContext('2d').putImageData(processedImageData, 0, 0);
-  ctx.drawImage(tmpCanvas, 0, 0);
-
-  canvas.style.display = 'block';
-  document.getElementById('bgPreviewArea').innerHTML = '';
-}
-
-function changeBackground(color) {
-  if (color === 'custom') {
-    const input = document.getElementById('customBgColor');
-    input.style.display = input.style.display === 'none' ? 'block' : 'none';
-    return;
-  }
-  renderResult(color);
-}
-
-function downloadResult() {
-  const canvas = document.getElementById('resultCanvas');
-  if (!canvas || canvas.style.display === 'none') { toast('❌ لا توجد صورة معالجة'); return; }
-
-  // For transparent, we need clean PNG
-  if (currentBgColor === 'transparent') {
-    const tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = processedImageData.width;
-    tmpCanvas.height = processedImageData.height;
-    tmpCanvas.getContext('2d').putImageData(processedImageData, 0, 0);
-    const a = document.createElement('a');
-    a.download = 'removed-bg-' + Date.now() + '.png';
-    a.href = tmpCanvas.toDataURL('image/png');
-    a.click();
-  } else {
-    const a = document.createElement('a');
-    a.download = 'removed-bg-' + Date.now() + '.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  }
-  toast('⬇️ تم التحميل!');
-  playSound('success');
-}
+const _share = sharePrompt;
+sharePrompt = function() {
+  _share();
+  trackStat('shared');
+};
 </script>
+
 </body>
 </html>
