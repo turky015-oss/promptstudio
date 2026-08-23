@@ -1,0 +1,20 @@
+{
+  "name": "turky-tools",
+  "interface": {
+    "displayName": "Turki Tools"
+  },
+  "plugins": [
+    {
+      "name": "short-prompt",
+      "source": {
+        "source": "local",
+        "path": "./plugins/short-prompt"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    }
+  ]
+}
