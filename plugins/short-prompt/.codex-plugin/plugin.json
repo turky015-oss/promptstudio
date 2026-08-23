@@ -1,0 +1,37 @@
+{
+  "name": "short-prompt",
+  "version": "1.0.0",
+  "description": "Generate platform-ready prompts for photography, video, Arabic calligraphy, and advertising.",
+  "author": {
+    "name": "Turki AlSultan",
+    "url": "https://turky015-oss.github.io/promptstudio/"
+  },
+  "homepage": "https://turky015-oss.github.io/promptstudio/",
+  "keywords": [
+    "prompts",
+    "image-generation",
+    "video",
+    "arabic",
+    "advertising"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Short Prompt",
+    "shortDescription": "مولّد برومبتات احترافي للصور والفيديو والإعلانات والخط العربي.",
+    "longDescription": "حوّل فكرتك إلى برومبت منظم وجاهز للمنصة المناسبة، مع إعدادات خاصة بالتصوير والفيديو والخط العربي والإعلانات.",
+    "developerName": "Turki AlSultan",
+    "category": "Design",
+    "capabilities": [
+      "Generate",
+      "Arabic",
+      "Creative"
+    ],
+    "websiteURL": "https://turky015-oss.github.io/promptstudio/",
+    "brandColor": "#7C5CFF",
+    "defaultPrompt": [
+      "سوّ لي برومبت تصوير احترافي لفكرتي.",
+      "حوّل فكرتي إلى برومبت فيديو سينمائي.",
+      "ابنِ إعلانًا بصريًا مناسبًا للسوق السعودي."
+    ]
+  }
+}
